@@ -1,0 +1,105 @@
+﻿@model IEnumerable<MyCollections.Models.User>
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="btn-toolbar" aria-label="Toolbar with button groups">
+
+
+</div>
+<form asp-controller="User">
+    <text> Admin Bar:  </text>
+    <input class="btn btn-outline-danger" type="submit" name="submit" value="Delete" formmethod="post" formaction="~/User/MultiplyDelete" style="border-color: white" />
+    <input class="btn btn-outline-warning" type="submit" name="submit" value="Block" formmethod="post" formaction="~/User/MultiplyBlock" style="border-color: white" />
+    <input class="btn btn-outline-success" type="submit" name="submit" value="Unblock" formmethod="post" formaction="~/User/MultiplyUnblock" style="border-color: white" />
+    <input class="btn btn-outline-dark" type="submit" name="submit" value="Set User Role" formmethod="post" formaction="~/User/MultiplySetUserRoot" style="border-color: white" />
+    <input class="btn btn-outline-primary" type="submit" name="submit" value="Set Admin Role" formmethod="post" formaction="~/User/MultiplySetAdminRoot" style="border-color: white" />
+    <table class="table table-borderless">
+        <thead class="thead-light text-dark">
+            <tr>
+                <th>
+                    <input type="checkbox" id="check_all" onclick="CheckAll('chek', this)"> Check all
+                </th>
+
+                <th>
+                    UserName
+                </th>
+
+                <th>
+                    Email
+                </th>
+                <th>
+                    Status
+                </th>
+                <th>
+                    Role
+                </th>
+
+
+            </tr>
+        </thead>
+
+        @foreach (var i in Model)
+        {
+            <tr>
+                <td>
+                    <input type="checkbox" name="usersId" value="@i.Id" class="chek">
+                </td>
+                <td>
+                    @Html.DisplayFor(mitem => i.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(mitem => i.Email)
+                </td>
+                <td>
+                    @if (i.IsActive)
+                    {
+                        <text ><span style="color: #34ce57">Not Blocked </span></text>
+                    }
+                    else
+                    {
+                        <text ><span style="color: red"> Blocked </span></text>
+                    }
+                </td>
+                <td>
+                    @if (i.AdminRoot)
+                    {
+                        <text ><span style="color: #00bfff">Admin </span></text>
+                    }
+                    else
+                    {
+                        <text ><span style="color: black"> User </span></text>
+                    }
+                </td>
+
+
+            </tr>
+
+        }
+    </table>
+</form>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+
+
+<script>
+        function CheckAll(className, elem) {
+            var elements = document.getElementsByClassName(className);
+            var l = elements.length;
+            if (elem.checked) {
+                for (var i = 0; i < l; i++) {
+                    elements[i].checked = true;
+                }
+            } else {
+                for (var i = 0; i < l; i++) {
+                    elements[i].checked = false;
+                }
+            }
+        }
+</script>
+
+

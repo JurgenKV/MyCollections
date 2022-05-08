@@ -1,0 +1,23 @@
+﻿@model MyCollections.ViewModels.LoginViewModel
+
+<h2>Login</h2>
+<form method="post" asp-controller="User" asp-action="Login"
+      asp-route-returnUrl="@Model.ReturnUrl">
+    <div asp-validation-summary="ModelOnly"></div>
+    <div>
+        <label asp-for="Email">UserName</label><br />
+        <input asp-for="Email" />
+        <span asp-validation-for="Email"></span>
+    </div>
+    <div>
+        <label asp-for="Password">
+            Password
+        </label><br />
+        <input asp-for="Password" />
+        <span asp-validation-for="Password"></span>
+    </div>
+
+    <div>
+        <input type="submit" value="Enter" />
+    </div>
+</form>
