@@ -29,6 +29,9 @@ namespace MyCollections.Models
         public DbSet<CollectionItem> CollectionItems { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<CustomField> CustomFields { get; set; }
+        public DbSet<ItemComment> ItemComments { get; set; }
+        public DbSet<ItemLike> ItemLikes { get; set; }
+
 
     }
 }

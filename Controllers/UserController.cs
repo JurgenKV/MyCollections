@@ -19,14 +19,14 @@ namespace MyCollections.Controllers
         private readonly ILogger<UserController> _logger;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private ApplicationContext db;
+        private ApplicationContext _db;
 
         public UserController(UserManager<User> userManager, SignInManager<User> signInManager, ILogger<UserController> logger, ApplicationContext context)
         {
             _logger = logger;
             _userManager = userManager;
             _signInManager = signInManager;
-            db = context;
+            _db = context;
         }
 
         [Authorize]
@@ -49,13 +49,13 @@ namespace MyCollections.Controllers
         [HttpGet]
         public IActionResult Registration()
         {
-
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Registration(RegisterViewModel model)
         {
+
             
             if (ModelState.IsValid)
             {

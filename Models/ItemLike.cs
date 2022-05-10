@@ -7,16 +7,12 @@ using System.Threading.Tasks;
 
 namespace MyCollections.Models
 {
-    public class UserCollection
+    public class ItemLike
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
-        public string IdUserCollection { get; set; } 
-        public string NameCollection { get; set; }
+        public int IdItemLike { get; set; }
         public string IdUser { get; set; }
-        public string Tag { get; set; }
-        public string Image { get; set; }
-
-        public ICollection<CollectionItem> Items { get; set; }
+        public string IdItem { get; set; }
     }
 }

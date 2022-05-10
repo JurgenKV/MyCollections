@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MyCollections.Migrations
 {
-    public partial class MyDb : Migration
+    public partial class myDb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -57,8 +57,7 @@ namespace MyCollections.Migrations
                     Tag = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Likes = table.Column<int>(type: "int", nullable: false),
-                    Picture = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -178,6 +177,8 @@ namespace MyCollections.Migrations
                     IdUserCollection = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     NameCollection = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IdUser = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Tag = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
@@ -195,7 +196,8 @@ namespace MyCollections.Migrations
                 name: "CustomFields",
                 columns: table => new
                 {
-                    IdCustomField = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    IdCustomField = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     NameCustomField = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Data = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IdItem = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -206,6 +208,49 @@ namespace MyCollections.Migrations
                     table.PrimaryKey("PK_CustomFields", x => x.IdCustomField);
                     table.ForeignKey(
                         name: "FK_CustomFields_Items_ItemId_item",
+                        column: x => x.ItemId_item,
+                        principalTable: "Items",
+                        principalColumn: "Id_item",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ItemComments",
+                columns: table => new
+                {
+                    IdItemComment = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IdUser = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IdItem = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ItemId_item = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemComments", x => x.IdItemComment);
+                    table.ForeignKey(
+                        name: "FK_ItemComments_Items_ItemId_item",
+                        column: x => x.ItemId_item,
+                        principalTable: "Items",
+                        principalColumn: "Id_item",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ItemLikes",
+                columns: table => new
+                {
+                    IdItemLike = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdUser = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IdItem = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ItemId_item = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemLikes", x => x.IdItemLike);
+                    table.ForeignKey(
+                        name: "FK_ItemLikes_Items_ItemId_item",
                         column: x => x.ItemId_item,
                         principalTable: "Items",
                         principalColumn: "Id_item",
@@ -293,6 +338,16 @@ namespace MyCollections.Migrations
                 column: "ItemId_item");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ItemComments_ItemId_item",
+                table: "ItemComments",
+                column: "ItemId_item");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemLikes_ItemId_item",
+                table: "ItemLikes",
+                column: "ItemId_item");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserCollections_UserId",
                 table: "UserCollections",
                 column: "UserId");
@@ -320,6 +375,12 @@ namespace MyCollections.Migrations
 
             migrationBuilder.DropTable(
                 name: "CustomFields");
+
+            migrationBuilder.DropTable(
+                name: "ItemComments");
+
+            migrationBuilder.DropTable(
+                name: "ItemLikes");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

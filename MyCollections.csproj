@@ -20,6 +20,8 @@
 
   <ItemGroup>
     <Folder Include="ImageStorage\ItemImage\" />
+    <Folder Include="ImageStorage\CollectionImage\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

@@ -15,10 +15,11 @@ namespace MyCollections.Models
         public string Tag { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public int Likes { get; set; }
-        public string Picture { get; set; }
+        public string Image { get; set; }
 
         public virtual ICollection<CollectionItem> CollectionItems{ get; set; }
         public virtual ICollection<CustomField> CustomFields { get; set; }
+        public virtual ICollection<ItemComment> ItemComments { get; set; }
+        public virtual ICollection<ItemLike> ItemLikes { get; set; }
     }
 }

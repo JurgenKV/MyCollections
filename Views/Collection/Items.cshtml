@@ -1,6 +1,104 @@
-﻿@*
+﻿@model ICollection<MyCollections.Models.Item>
+
+
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-}
 
+}
+<link href="~/css/ItemsPage.css" rel="stylesheet"/>
+<h2>Catalog</h2>
+
+<form method="post" asp-action="Items">
+    <p>
+        <input type="search" name="str" placeholder="Поиск по сайту">
+        <input type="submit" value="Найти" formaction="~/Collection/Items">
+    </p>
+</form>
+
+<form asp-controller="Collection">
+
+
+    <table>
+        <tr>
+            <th> </th><th> </th><th> </th><th> </th> <th> </th>
+        </tr>
+
+        @foreach (var i in Model)
+        {
+            <tr>
+                <td>
+                    image
+                </td>
+                <td>
+                    @Html.DisplayFor(item => i.Tag)
+                </td>
+                <td>
+                    @Html.DisplayFor(item => i.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(item => i.Description)
+                </td>
+                <td>
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        @if (i.ItemLikes != null)
+                        {
+                            @foreach (var like in i.ItemLikes)
+                            {
+                                if (like.IdUser == User.Identity.Name)
+                                {
+                                    <div method="post" asp-action="SetItemLike">
+                                        <input id="toggle-heart" type="checkbox" name="usersId" value="@User.Identity.Name" class="chek" formaction="~/Collection/SetItemLike">
+                                        <label for="toggle-heart" aria-label="like">❤</label>
+                                    </div>
+                                }
+                                @Html.DisplayFor(item => i.ItemLikes.Count())
+                            }
+                        }
+                        else
+                        {
+                            <div method="post" asp-action="SetItemLike">
+                                <div align="center">
+                                    <input id="toggle-heart" type="checkbox" name="usersId" value="" class="chek" formaction="~/Collection/SetItemLike">
+                                    <label for="toggle-heart" aria-label="like">❤</label>
+                                    <p>0</p>
+                                </div>
+                            </div>
+                        }
+                    }
+                </td>
+                <td>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <div>
+                            @if(i.ItemLikes != null)
+                            {<p>  @i.ItemLikes.Count() </p>} 
+                        </div>
+                    }
+                </td>
+            </tr>
+        }
+
+    </table>
+
+</form>
+
+<script>
+    function CheckAll(className, elem) {
+        var elements = document.getElementsByClassName(className);
+        var l = elements.length;
+        if (elem.checked) {
+            for (var i = 0; i < l; i++) {
+                elements[i].checked = true;
+            }
+        } else {
+            for (var i = 0; i < l; i++) {
+                elements[i].checked = false;
+            }
+        }
+    }
+</script>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>

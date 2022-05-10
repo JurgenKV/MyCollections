@@ -12,7 +12,6 @@ namespace MyCollections.Models
         public bool IsActive { get; set; }
         public bool AdminRoot { get; set; }
         public bool IsWhiteTheme { get; set; }
-
         public virtual ICollection<UserCollection> UserCollections { get; set; }
     }
 }

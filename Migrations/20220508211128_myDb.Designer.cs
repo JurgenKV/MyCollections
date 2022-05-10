@@ -10,8 +10,8 @@ using MyCollections.Models;
 namespace MyCollections.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220508101537_MyDb")]
-    partial class MyDb
+    [Migration("20220508211128_myDb")]
+    partial class myDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -177,8 +177,10 @@ namespace MyCollections.Migrations
 
             modelBuilder.Entity("MyCollections.Models.CustomField", b =>
                 {
-                    b.Property<string>("IdCustomField")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("IdCustomField")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Data")
                         .HasColumnType("nvarchar(max)");
@@ -208,13 +210,10 @@ namespace MyCollections.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Likes")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
+                    b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Picture")
+                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Tag")
@@ -223,6 +222,55 @@ namespace MyCollections.Migrations
                     b.HasKey("Id_item");
 
                     b.ToTable("Items");
+                });
+
+            modelBuilder.Entity("MyCollections.Models.ItemComment", b =>
+                {
+                    b.Property<int>("IdItemComment")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdItem")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdUser")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ItemId_item")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("IdItemComment");
+
+                    b.HasIndex("ItemId_item");
+
+                    b.ToTable("ItemComments");
+                });
+
+            modelBuilder.Entity("MyCollections.Models.ItemLike", b =>
+                {
+                    b.Property<int>("IdItemLike")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("IdItem")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdUser")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ItemId_item")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("IdItemLike");
+
+                    b.HasIndex("ItemId_item");
+
+                    b.ToTable("ItemLikes");
                 });
 
             modelBuilder.Entity("MyCollections.Models.User", b =>
@@ -308,7 +356,13 @@ namespace MyCollections.Migrations
                     b.Property<string>("IdUser")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("NameCollection")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Tag")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
@@ -394,6 +448,20 @@ namespace MyCollections.Migrations
                         .HasForeignKey("ItemId_item");
                 });
 
+            modelBuilder.Entity("MyCollections.Models.ItemComment", b =>
+                {
+                    b.HasOne("MyCollections.Models.Item", null)
+                        .WithMany("ItemComments")
+                        .HasForeignKey("ItemId_item");
+                });
+
+            modelBuilder.Entity("MyCollections.Models.ItemLike", b =>
+                {
+                    b.HasOne("MyCollections.Models.Item", null)
+                        .WithMany("ItemLikes")
+                        .HasForeignKey("ItemId_item");
+                });
+
             modelBuilder.Entity("MyCollections.Models.UserCollection", b =>
                 {
                     b.HasOne("MyCollections.Models.User", null)
@@ -406,6 +474,10 @@ namespace MyCollections.Migrations
                     b.Navigation("CollectionItems");
 
                     b.Navigation("CustomFields");
+
+                    b.Navigation("ItemComments");
+
+                    b.Navigation("ItemLikes");
                 });
 
             modelBuilder.Entity("MyCollections.Models.User", b =>
