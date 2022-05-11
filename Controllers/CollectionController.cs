@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -38,43 +42,10 @@ namespace MyCollections.Controllers
                 return View(item.ToList());
             }
 
-            ///
-            var users = _userManager.Users.ToList();
-            string currIdUser = "";
-
-            foreach (var u in users)
-            {
-                if (User.Identity.Name == u.UserName)
-                {
-                    currIdUser = u.Id;
-                }
-            }
-
-            //ItemLike itt = new ItemLike
-            //{
-            //    IdUser = currIdUser,
-
-            //};
-            //Item it = _db.Items.Where(i => i.Name == "Crazy Maks").FirstOrDefault();
-            //if (it != null)
-            //{
-            //    ItemLike itt = new ItemLike
-            //    {
-            //        IdUser = currIdUser,
-            //        IdItem = it.Id_item
-
-            //    };
-            //    if (it.ItemLikes == null)
-            //        it.ItemLikes = new List<ItemLike>();
-
-            //    it.ItemLikes.Add(itt);
-
-            //    _db.SaveChangesAsync();
-
-            //}
             return View(itemsList.ToList());
         }
 
+        [HttpPost]
         public IActionResult ItemProfile(string id)
          {
              
@@ -94,38 +65,58 @@ namespace MyCollections.Controllers
                 }
             }
 
-            //foreach (var i in _db.Items)
-            //{
-
-            //    i.ItemLikes = new List<ItemLike>
-            //    {
-            //        new ItemLike
-            //        {
-            //            IdUser = currIdUser,
-            //            IdItem = i.Id_item
-
-            //        }
-            //    };
-                
-
-            //    _db.Items.Update(i);
-            //    _db.SaveChanges();
-            //    break;
-            //}
-            ItemLike itt = new ItemLike
-            {
-                IdUser = currIdUser,
-
-            };
-            var it = _db.Items.Find("Crazy Maks");
-            if (it != null)
-            {
-                it.ItemLikes.Add(itt);
-                _db.SaveChanges();
-            }
-            
             return RedirectToAction("Items", "Collection");
         }
+
+        public IActionResult SetItemComment(string itemId, string comment)
+        {
+
+            return View("ItemProfile");
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddCollection(string idUser, string name, string tag, string description, IFormFile image )
+        {
+            string path = null;
+
+            if (image != null)
+            {
+                // путь к папке Files
+                path = "/ImageStorage/CollectionImage/" + image.FileName;
+                // сохраняем файл в папку Files в каталоге wwwroot
+                using (var fileStream = new FileStream(path, FileMode.Create))
+                {
+                    await image.CopyToAsync(fileStream);
+                }
+            }
+
+
+            UserCollection userCollection = new UserCollection
+            {
+                Name = name,
+                Id_user = idUser,
+                Description = description,
+                Tag = tag,
+                Image = path
+            };
+
+
+            _db.UserCollections.Add(userCollection);
+            _db.SaveChanges();
+
+            return RedirectToAction("UserProfile", "User");
+        }
+        [HttpPost]
+        public IActionResult UpdateCollection()
+        {
+            return RedirectToAction("UserProfile", "User");
+        }
+        [HttpPost]
+        public IActionResult DeleteCollection()
+        {
+            return RedirectToAction("UserProfile", "User");
+        }
+
+
 
 
     }

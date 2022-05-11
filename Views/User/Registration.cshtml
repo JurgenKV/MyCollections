@@ -1,33 +1,63 @@
 ﻿@{
 }
 @model MyCollections.ViewModels.RegisterViewModel
-<h2>Registration</h2>
-<form method="post" asp-controller="User" asp-action="Registration">
-    <div asp-validation-summary="ModelOnly"></div>
-    <div>
-        <label asp-for="Login"></label><br />
-        <input asp-for="Login" required />
-        <span asp-validation-for="Login"></span>
-    </div>
-    <div>
-        <label asp-for="Email"></label><br />
-        <input asp-for="Email" type="email" required />
-        <span asp-validation-for="Email"></span>
-    </div>
-    <div>
-        <label asp-for="Password"></label><br />
-        <input asp-for="Password" type="password" required />
-        <span asp-validation-for="Password"></span>
-    </div>
+<link href="~/css/RegLoginPage.css" rel="stylesheet" />
 
-    <div>
-        <label asp-for="PasswordConfirm"></label><br />
-        <input asp-for="PasswordConfirm" type="password" required />
-        <span asp-validation-for="PasswordConfirm"></span>
-    </div>
+    @*
+            <h2>Registration</h2>
+        <form method="post" asp-controller="User" asp-action="Registration">
+            <div asp-validation-summary="ModelOnly"></div>
+            <div>
+                <label asp-for="Login"></label><br />
+                <input asp-for="Login" required />
+                <span asp-validation-for="Login"></span>
+            </div>
+            <div>
+                <label asp-for="Email"></label><br />
+                <input asp-for="Email" type="email" required />
+                <span asp-validation-for="Email"></span>
+            </div>
+            <div>
+                <label asp-for="Password"></label><br />
+                <input asp-for="Password" type="password" required />
+                <span asp-validation-for="Password"></span>
+            </div>
 
-    <div>
-        <text> </text>
-        <input type="submit" value="Registration" />
-    </div>
-</form>
+            <div>
+                <label asp-for="PasswordConfirm"></label><br />
+                <input asp-for="PasswordConfirm" type="password" required />
+                <span asp-validation-for="PasswordConfirm"></span>
+            </div>
+
+            <div>
+                <text> </text>
+                <input type="submit" value="Registration" />
+            </div>
+        </form>*@
+
+    <form method="post" class="ui-form" asp-controller="User" asp-action="Registration">
+
+        <h3>Registration</h3>
+        <div class="form-row">
+            <label asp-for="Login"></label><br />
+            <input asp-for="Login" required />
+            <span asp-validation-for="Login"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="Email"></label><br />
+            <input asp-for="Email" type="email" required />
+            <span asp-validation-for="Email"></span>
+        </div>
+        <div class="form-row">
+            <label asp-for="Password"></label><br />
+            <input asp-for="Password" type="password" required />
+            <span asp-validation-for="Password"></span>
+        </div>
+        <div class="form-row">
+            <label asp-for="PasswordConfirm"></label><br />
+            <input asp-for="PasswordConfirm" type="password" required />
+            <span asp-validation-for="PasswordConfirm"></span>
+        </div>
+        <p><input type="submit" value="Войти"></p>
+    </form>

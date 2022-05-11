@@ -170,3 +170,74 @@ tr:hover td {
     }
 }
 
+ul.last-com {
+    margin: 0;
+    padding: 0;
+    font: 11px Verdana;
+    color: #666;
+}
+
+.last-com li {
+    list-style: none;
+    line-height: 18px;
+    margin-bottom: 10px;
+}
+
+ul.last-com img {
+    float: left;
+    margin: 0 5px 8px 0;
+    border: 1px solid #666;
+}
+
+.last-com a {
+    color: #ccc;
+    text-decoration: underline;
+}
+
+.last-com a:hover {
+    color: #333;
+    text-decoration: underline;
+}
+
+.last-com cc {
+    margin-left: 5px;
+}
+
+.widget-comments.open {
+    max-height: 100000px;
+}
+
+.widget-comments {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.3s ease-in-out 0.1s;
+}
+
+.widget {
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.widget-comments .block-title {
+    color: #fff;
+    background-color: #592d86;
+    text-shadow: none;
+    padding-left: 20px;
+    padding-top: 10px;
+    font-weight: 400;
+}
+
+.widget .block-title {
+    margin-bottom: 15px;
+}
+
+.block-title {
+    font-weight: 700;
+    font-size: 20px;
+    color: #1e1e1e;
+    padding: 15px 0 10px;
+    position: relative;
+    margin-bottom: 1px;
+    border-bottom: 1px solid #f0f0f0;
+}
+

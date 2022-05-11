@@ -17,7 +17,7 @@
     </p>
 </form>
 
-<form asp-controller="Collection">
+<div asp-controller="Collection">
 
 
     <table>
@@ -35,7 +35,12 @@
                     @Html.DisplayFor(item => i.Tag)
                 </td>
                 <td>
-                    @Html.DisplayFor(item => i.Name)
+                    <form method="post" asp-action="ItemProfile">
+                        <p>
+                            <input name="id" , value="@i.Id_item" style="visibility: hidden" />
+                            <input type="submit" name="button" value="@i.Name" formaction="~/Collection/ItemProfile">
+                        </p>
+                    </form>
                 </td>
                 <td>
                     @Html.DisplayFor(item => i.Description)
@@ -73,8 +78,11 @@
                     @if (User.Identity.IsAuthenticated)
                     {
                         <div>
-                            @if(i.ItemLikes != null)
-                            {<p>  @i.ItemLikes.Count() </p>} 
+                            @if (i.ItemLikes != null)
+                            {
+                                
+                            <p> @i.ItemLikes.Count() </p>
+                            }
                         </div>
                     }
                 </td>
@@ -83,7 +91,7 @@
 
     </table>
 
-</form>
+</div>
 
 <script>
     function CheckAll(className, elem) {

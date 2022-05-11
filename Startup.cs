@@ -100,6 +100,10 @@ namespace MyCollections
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=User}/{action=Index}/{id?}");
+                endpoints.MapControllerRoute(
+                    name: "default1",
+                    pattern: "{controller=Collection}/{action=ItemProfile}/{name?}");
+               
             });
         }
     }

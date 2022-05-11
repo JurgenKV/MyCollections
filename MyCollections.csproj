@@ -19,9 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ImageStorage\ItemImage\" />
-    <Folder Include="ImageStorage\CollectionImage\" />
     <Folder Include="Migrations\" />
+    <Folder Include="wwwroot\ImageStorage\ItemImage\" />
+    <Folder Include="wwwroot\ImageStorage\CollectionImage\" />
   </ItemGroup>
 
 </Project>

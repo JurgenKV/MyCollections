@@ -32,6 +32,5 @@ namespace MyCollections.Models
         public DbSet<ItemComment> ItemComments { get; set; }
         public DbSet<ItemLike> ItemLikes { get; set; }
 
-
     }
 }

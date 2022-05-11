@@ -15,5 +15,6 @@ namespace MyCollections.Models
         public string Comment { get; set; }
         public string IdUser { get; set; }
         public string IdItem { get; set; }
+        public string Date { get; set; }
     }
 }

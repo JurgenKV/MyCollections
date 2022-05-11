@@ -6,10 +6,9 @@ using MyCollections.Models;
 
 namespace MyCollections.ViewModels
 {
-    public class ItemProfileViewModel
+    public class UserProfileViewModel
     {
-        private Item CurrentItem;
-        private ICollection<ItemComment> itemComments;
-        private ICollection<User> users;
+        public Task<User> User;
+        public ICollection<UserCollection> UserCollections;
     }
 }
