@@ -81,7 +81,7 @@ namespace MyCollections.Controllers
             if (image != null)
             {
                 // путь к папке Files
-                path = "/ImageStorage/CollectionImage/" + image.FileName;
+                path = "wwwroot/ImageStorage/CollectionImage/" + idUser +"/"+ image.FileName;
                 // сохраняем файл в папку Files в каталоге wwwroot
                 using (var fileStream = new FileStream(path, FileMode.Create))
                 {
@@ -89,11 +89,10 @@ namespace MyCollections.Controllers
                 }
             }
 
-
             UserCollection userCollection = new UserCollection
             {
                 Name = name,
-                IdUser = idUser,
+                UserId = idUser,
                 Description = description,
                 Tag = tag,
                 Image = path
@@ -101,23 +100,47 @@ namespace MyCollections.Controllers
 
 
             _db.UserCollections.Add(userCollection);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
+            User user = _db.User.First(i => i.Id == idUser);
 
-            return RedirectToAction("UserProfile", "User");
+            return RedirectToAction("UserProfile", "User", new{ user.UserName });
         }
+
         [HttpPost]
-        public IActionResult UpdateCollection()
+        public IActionResult UpdateCollection(string idUser, string id, string name, string tag, string description,
+            IFormFile image)
         {
-            return RedirectToAction("UserProfile", "User");
+            User user = _db.User.First(i => i.Id == idUser);
+            UserCollection userCollection = _db.UserCollections.First(i => i.Id == id);
+            string path = "wwwroot/ImageStorage/CollectionImage/" + user.Id + "/" + image.FileName;
+
+            if (!string.IsNullOrEmpty(name))
+                userCollection.Name = name;
+
+            if (!string.IsNullOrEmpty(tag))
+                userCollection.Tag = tag;
+
+            if (!string.IsNullOrEmpty(description))
+                userCollection.Description = description;
+
+            if (!string.IsNullOrEmpty(image.FileName))
+            {
+                if (!path.Equals(userCollection.Image))
+                {
+                    System.IO.File.Delete(userCollection.Image);
+                }
+                using var fileStream = new FileStream(path, FileMode.Create);
+                image.CopyTo(fileStream);
+            }
+
+            return RedirectToAction("UserProfile", "User", new { name });
         }
+
         [HttpPost]
         public IActionResult DeleteCollection()
         {
             return RedirectToAction("UserProfile", "User");
         }
-
-
-
 
     }
 }

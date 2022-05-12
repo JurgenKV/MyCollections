@@ -20,7 +20,7 @@ namespace MyCollections.Controllers
         private readonly ILogger<UserController> _logger;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private ApplicationContext _db;
+        private readonly ApplicationContext _db;
 
         public UserController(UserManager<User> userManager, SignInManager<User> signInManager, ILogger<UserController> logger, ApplicationContext context)
         {
@@ -259,6 +259,9 @@ namespace MyCollections.Controllers
                     if (user != null)
                     {
                         await _userManager.DeleteAsync(user);
+                        
+
+
                         if (User.Identity.Name == user.UserName)
                         {
                             toOut = true;
@@ -281,24 +284,7 @@ namespace MyCollections.Controllers
                 return RedirectToAction("Index", "User");
             }
 
-
         }
-
-        //public IActionResult UserProfile()
-        //{
-        //    var users = _userManager.Users.ToList();
-        //    foreach (var u in users)
-        //    {
-        //        if (User.Identity.Name == u.UserName)
-        //        {
-        //            return View(u);
-        //        }
-        //    }
-
-        //    // return View(_userManager.Users.ToList());
-        //    return View();
-        //}
-
 
         public IActionResult Privacy()
         {
@@ -310,18 +296,32 @@ namespace MyCollections.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        [HttpPost]
+
         public IActionResult UserProfile(string name)
         {
             UserProfileViewModel userProfile = new UserProfileViewModel();
-            Task<User> user = _userManager.FindByNameAsync(name);
+            User user;
+            if (!string.IsNullOrEmpty(name))
+            {
+                user = _db.User.First(i => i.UserName == name);
+            }
+            else
+            {
+                user = _db.User.First(i => i.UserName == User.Identity.Name);
+            }
+            
+            userProfile.UserCollections =  _db.UserCollections.Where(coll => coll.UserId.Equals(user.Id));
 
-            IEnumerable<UserCollection> collections = _db.UserCollections.Where(coll => coll.Id_collection.Equals(user.Id));
-            userProfile.UserCollections = collections as ICollection<UserCollection>;
             userProfile.User = user;
 
-           return View(userProfile);
+            return View(userProfile);
         }
 
+        public void DeleteUserData(User user)
+        {
+            
+
+
+        }
     }
 }

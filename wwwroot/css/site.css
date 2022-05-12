@@ -294,10 +294,10 @@ li {
 }
 
 /* Стиль элемента "active", чтобы выделить текущую страницу */
-.topnav a.active {
-    background-color: #2196F3;
-    color: white;
-}
+    .topnav a.active {
+        background-color: white;
+        color: white;
+    }
 
 /* Стиль окна поиска внутри панели навигации */
 .topnav input[type=text] {

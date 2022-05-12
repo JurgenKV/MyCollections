@@ -17,8 +17,8 @@
     <input class="btn btn-outline-success" type="submit" name="submit" value="Unblock" formmethod="post" formaction="~/User/MultiplyUnblock" style="border-color: white" />
     <input class="btn btn-outline-dark" type="submit" name="submit" value="Set User Role" formmethod="post" formaction="~/User/MultiplySetUserRoot" style="border-color: white" />
     <input class="btn btn-outline-primary" type="submit" name="submit" value="Set Admin Role" formmethod="post" formaction="~/User/MultiplySetAdminRoot" style="border-color: white" />
-    <table class="table table-borderless">
-        <thead class="thead-light text-dark">
+    <table class="table table-borderless table-bordered">
+        <thead class="text-dark">
             <tr>
                 <th>
                     <input type="checkbox" id="check_all" onclick="CheckAll('chek', this)"> Check all
@@ -49,7 +49,11 @@
                     <input type="checkbox" name="usersId" value="@i.Id" class="chek">
                 </td>
                 <td>
-                    @Html.DisplayFor(mitem => i.UserName)
+                    <form method="post" asp-action="UserProfile">
+                        <input name="name" value="@i.UserName" style="visibility: hidden" />
+                        <input type="submit" name="button" value="@i.UserName" class="btn btn-link text-dark" formaction="~/User/UserProfile">
+
+                    </form>
                 </td>
                 <td>
                     @Html.DisplayFor(mitem => i.Email)

@@ -11,15 +11,14 @@ namespace MyCollections.Models
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
-        public string Id_collection { get; set; } 
+        public string Id { get; set; } 
         public string Name { get; set; }
-        public string IdUser { get; set; }
+        public string UserId { get; set; }
         public string Description { get; set; }
         public string Tag { get; set; }
         public string Image { get; set; }
 
         
-
         public ICollection<CollectionItem> Items { get; set; }
     }
 }

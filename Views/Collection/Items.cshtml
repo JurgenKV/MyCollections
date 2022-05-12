@@ -37,7 +37,7 @@
                 <td>
                     <form method="post" asp-action="ItemProfile">
                         <p>
-                            <input name="id" , value="@i.Id_item" style="visibility: hidden" />
+                            <input name="id" , value="@i.Id" style="visibility: hidden" />
                             <input type="submit" name="button" value="@i.Name" formaction="~/Collection/ItemProfile">
                         </p>
                     </form>
@@ -52,7 +52,7 @@
                         {
                             @foreach (var like in i.ItemLikes)
                             {
-                                if (like.IdUser == User.Identity.Name)
+                                if (like.UserId == User.Identity.Name)
                                 {
                                     <div method="post" asp-action="SetItemLike">
                                         <input id="toggle-heart" type="checkbox" name="usersId" value="@User.Identity.Name" class="chek" formaction="~/Collection/SetItemLike">

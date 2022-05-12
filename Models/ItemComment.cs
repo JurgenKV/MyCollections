@@ -11,10 +11,10 @@ namespace MyCollections.Models
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
-        public int IdItemComment { get; set; }
+        public int Id { get; set; }
         public string Comment { get; set; }
-        public string IdUser { get; set; }
-        public string IdItem { get; set; }
+        public string UserId { get; set; }
+        public string ItemId { get; set; }
         public string Date { get; set; }
     }
 }

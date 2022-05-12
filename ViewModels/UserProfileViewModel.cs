@@ -8,7 +8,7 @@ namespace MyCollections.ViewModels
 {
     public class UserProfileViewModel
     {
-        public Task<User> User;
-        public ICollection<UserCollection> UserCollections;
+        public User User;
+        public IQueryable<UserCollection> UserCollections;
     }
 }

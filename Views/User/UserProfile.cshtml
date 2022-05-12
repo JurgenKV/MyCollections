@@ -15,60 +15,64 @@
     <div class="rendered-form">
         <div class="formbuilder-textarea form-group field-textarea-1651927795264-0">
             <label for="textarea-1651927795264-0" class="formbuilder-textarea-label">
-                @*@Model.User.Result.UserName*@
+
+                @Model.User.UserName
             </label>
-            <textarea class="form-control" name="textarea-1651927795264-0" id="textarea-1651927795264-0">UserName </textarea>
         </div>
 
     </div>
 </form>
 
+
 <div>
     <text> Collection Tools:  </text>
-    
-    <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-        Создать коллекцию
-    </button>
 
-    <input class="btn btn-outline-info" type="submit" name="submit" value="Update" formmethod="post" formaction="~/Collection/UpdateCollection" style="border-color: white" />
+    <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#staticBackdropCreate">
+        Create
+    </button>
+    <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#staticBackdropUpdate">
+        Update
+    </button>
+    <input class="" type="submit" name="submit" value="Update" formmethod="post" formaction="~/Collection/UpdateCollection" style="border-color: white" />
     <input class="btn btn-outline-danger" type="submit" name="submit" value="Delete" formmethod="post" formaction="~/User/DeleteCollection" style="border-color: white" />
+
     @if (Model.UserCollections != null)
     {
         <table class="table table-borderless">
             <thead class="thead-light text-dark">
-            <tr>
-                <th>
-                    <p>Выбор</p>
-                </th>
+                <tr>
+                    <th>
+                        <p>Выбор</p>
+                    </th>
 
-                <th>
-                    Картинка
-                </th>
+                    <th>
+                        Картинка
+                    </th>
 
-                <th>
-                    Название
-                </th>
-                <th>
+                    <th>
+                        Название
+                    </th>
+                    <th>
 
-                </th>
-                <th>
-                    Описание
-                </th>
-                <th>
+                    </th>
+                    <th>
+                        Описание
+                    </th>
+                    <th>
 
-                </th>
+                    </th>
 
-            </tr>
+                </tr>
             </thead>
 
             @foreach (var i in Model.UserCollections)
             {
                 <tr>
                     <td>
-                        <input type="radio" name="usersId" value="@i.Id_collection" class="chek">
+                        <input type="radio" name="usersId" value="@i.Id" class="chek">
                     </td>
                     <td>
-                        <p>Image</p>
+                        <p> Image </p>
                     </td>
                     <td>
                         @Html.DisplayFor(mitem => i.Name)
@@ -81,7 +85,6 @@
                     </td>
 
                 </tr>
-
             }
 
         </table>
@@ -90,52 +93,90 @@
 
 <!-- Modal -->
 
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form method="post" asp-controller="Collection" asp-action="AddCollection">
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <label for="rendered-form" class="form-label">Загрузить изображение</label>
-                                <input type="file" class="form-control" id="img" name="image">
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="rendered-form" class="form-label">Название коллекции</label>
-                                <input type="text" class="form-control" id="IDname" name="name" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="rendered-form" class="form-label">Tag</label>
-                                <input type="text" class="form-control" id="IDtag" name="tag" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="rendered-form" class="form-label">Description</label>
-                                <input type="text" class="form-control" id="IDdes" name="description">
-                            </div>
-
-                        </div>
-                        <div class="modal-footer">
-
-                        </div>
-                        <input name="idUser" value="@Model.User.Id" style="visibility: hidden" />
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <input class="btn btn-primary" type="submit" value="Create" formaction="~/Collection/AddCollection">
-                    </form>
-                </div>
+<div class="modal fade" id="staticBackdropCreate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-        
-    </div>
+            <form method="post" asp-controller="Collection" asp-action="AddCollection" enctype="multipart/form-data" onSubmit="window.location.reload()">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="rendered-form" class="form-label">Загрузить изображение</label>
+                        <input type="file" class="form-control" id="img" name="image">
+                    </div>
 
-<script>
+                    <div class="mb-3">
+                        <label for="rendered-form" class="form-label">Название коллекции</label>
+                        <input type="text" class="form-control" id="IDname" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rendered-form" class="form-label">Tag</label>
+                        <input type="text" class="form-control" id="IDtag" name="tag" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rendered-form" class="form-label">Description</label>
+                        <input type="text" class="form-control" id="IDdes" name="description">
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+
+                </div>
+                <input name="idUser" value="@Model.User.Id" style="visibility: hidden" />
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <input class="btn btn-primary" type="submit" value="Create" formaction="~/Collection/AddCollection">
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="staticBackdropUpdate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" asp-controller="Collection" asp-action="UpdateCollection" enctype="multipart/form-data" onSubmit="window.location.reload()">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="rendered-form" class="form-label">Загрузить изображение</label>
+                        <input type="file" class="form-control" id="img" name="image">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="rendered-form" class="form-label">Название коллекции</label>
+                        <input type="text" class="form-control" id="IDname" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rendered-form" class="form-label">Tag</label>
+                        <input type="text" class="form-control" id="IDtag" name="tag" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rendered-form" class="form-label">Description</label>
+                        <input type="text" class="form-control" id="IDdes" name="description">
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+
+                </div>
+                <input name="idUser" value="@Model.User.Id" style="visibility: hidden" />
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <input class="btn btn-primary" type="submit" value="Create" formaction="~/Collection/AddCollection">
+            </form>
+        </div>
+    </div>
+</div>
+
+@*<script>
     var myModal = document.getElementById('myModal')
     var myInput = document.getElementById('myInput')
 
     myModal.addEventListener('shown.bs.modal', function () {
         myInput.focus();
     })
-</script>
+</script>*@
 

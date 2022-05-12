@@ -9,10 +9,10 @@ namespace MyCollections.Models
     public class CustomField
     {
         [Key]
-        public int IdCustomField { get; set; }
-        public string NameCustomField { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
         public string Data { get; set; }
-        public string IdItem { get; set; }
+        public string ItemId { get; set; }
 
     }
 }

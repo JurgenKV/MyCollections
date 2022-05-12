@@ -11,7 +11,7 @@ namespace MyCollections.Models
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
-        public string Id_item { get; set; }
+        public string Id { get; set; }
         public string Tag { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }

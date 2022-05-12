@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MyCollections.Migrations
 {
-    public partial class myDb : Migration
+    public partial class MyDb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -53,7 +53,7 @@ namespace MyCollections.Migrations
                 name: "Items",
                 columns: table => new
                 {
-                    Id_item = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Tag = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -61,7 +61,7 @@ namespace MyCollections.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Items", x => x.Id_item);
+                    table.PrimaryKey("PK_Items", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -174,17 +174,16 @@ namespace MyCollections.Migrations
                 name: "UserCollections",
                 columns: table => new
                 {
-                    Id_collection = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IdUser = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Tag = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserCollections", x => x.Id_collection);
+                    table.PrimaryKey("PK_UserCollections", x => x.Id);
                     table.ForeignKey(
                         name: "FK_UserCollections_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -197,21 +196,20 @@ namespace MyCollections.Migrations
                 name: "CustomFields",
                 columns: table => new
                 {
-                    IdCustomField = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    NameCustomField = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Data = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IdItem = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ItemId_item = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    ItemId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CustomFields", x => x.IdCustomField);
+                    table.PrimaryKey("PK_CustomFields", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CustomFields_Items_ItemId_item",
-                        column: x => x.ItemId_item,
+                        name: "FK_CustomFields_Items_ItemId",
+                        column: x => x.ItemId,
                         principalTable: "Items",
-                        principalColumn: "Id_item",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -219,22 +217,21 @@ namespace MyCollections.Migrations
                 name: "ItemComments",
                 columns: table => new
                 {
-                    IdItemComment = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IdUser = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IdItem = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Date = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ItemId_item = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ItemId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Date = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ItemComments", x => x.IdItemComment);
+                    table.PrimaryKey("PK_ItemComments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ItemComments_Items_ItemId_item",
-                        column: x => x.ItemId_item,
+                        name: "FK_ItemComments_Items_ItemId",
+                        column: x => x.ItemId,
                         principalTable: "Items",
-                        principalColumn: "Id_item",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -242,20 +239,19 @@ namespace MyCollections.Migrations
                 name: "ItemLikes",
                 columns: table => new
                 {
-                    IdItemLike = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    IdUser = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IdItem = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ItemId_item = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ItemId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ItemLikes", x => x.IdItemLike);
+                    table.PrimaryKey("PK_ItemLikes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ItemLikes_Items_ItemId_item",
-                        column: x => x.ItemId_item,
+                        name: "FK_ItemLikes_Items_ItemId",
+                        column: x => x.ItemId,
                         principalTable: "Items",
-                        principalColumn: "Id_item",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -263,25 +259,25 @@ namespace MyCollections.Migrations
                 name: "CollectionItems",
                 columns: table => new
                 {
-                    IdCollection = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    IdItem = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ItemId_item = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    UserCollectionId_collection = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ItemId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    UserCollectionId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CollectionItems", x => x.IdCollection);
+                    table.PrimaryKey("PK_CollectionItems", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CollectionItems_Items_ItemId_item",
-                        column: x => x.ItemId_item,
+                        name: "FK_CollectionItems_Items_ItemId",
+                        column: x => x.ItemId,
                         principalTable: "Items",
-                        principalColumn: "Id_item",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_CollectionItems_UserCollections_UserCollectionId_collection",
-                        column: x => x.UserCollectionId_collection,
+                        name: "FK_CollectionItems_UserCollections_UserCollectionId",
+                        column: x => x.UserCollectionId,
                         principalTable: "UserCollections",
-                        principalColumn: "Id_collection",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -325,29 +321,29 @@ namespace MyCollections.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CollectionItems_ItemId_item",
+                name: "IX_CollectionItems_ItemId",
                 table: "CollectionItems",
-                column: "ItemId_item");
+                column: "ItemId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CollectionItems_UserCollectionId_collection",
+                name: "IX_CollectionItems_UserCollectionId",
                 table: "CollectionItems",
-                column: "UserCollectionId_collection");
+                column: "UserCollectionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CustomFields_ItemId_item",
+                name: "IX_CustomFields_ItemId",
                 table: "CustomFields",
-                column: "ItemId_item");
+                column: "ItemId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ItemComments_ItemId_item",
+                name: "IX_ItemComments_ItemId",
                 table: "ItemComments",
-                column: "ItemId_item");
+                column: "ItemId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ItemLikes_ItemId_item",
+                name: "IX_ItemLikes_ItemId",
                 table: "ItemLikes",
-                column: "ItemId_item");
+                column: "ItemId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserCollections_UserId",
