@@ -93,7 +93,7 @@ namespace MyCollections.Controllers
             UserCollection userCollection = new UserCollection
             {
                 Name = name,
-                Id_user = idUser,
+                IdUser = idUser,
                 Description = description,
                 Tag = tag,
                 Image = path

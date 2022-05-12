@@ -13,7 +13,7 @@ namespace MyCollections.Models
         [Key]
         public string Id_collection { get; set; } 
         public string Name { get; set; }
-        public string Id_user { get; set; }
+        public string IdUser { get; set; }
         public string Description { get; set; }
         public string Tag { get; set; }
         public string Image { get; set; }

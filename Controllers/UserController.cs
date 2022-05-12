@@ -284,20 +284,20 @@ namespace MyCollections.Controllers
 
         }
 
-        public IActionResult UserProfile()
-        {
-            var users = _userManager.Users.ToList();
-            foreach (var u in users)
-            {
-                if (User.Identity.Name == u.UserName)
-                {
-                    return View(u);
-                }
-            }
+        //public IActionResult UserProfile()
+        //{
+        //    var users = _userManager.Users.ToList();
+        //    foreach (var u in users)
+        //    {
+        //        if (User.Identity.Name == u.UserName)
+        //        {
+        //            return View(u);
+        //        }
+        //    }
 
-            // return View(_userManager.Users.ToList());
-            return View();
-        }
+        //    // return View(_userManager.Users.ToList());
+        //    return View();
+        //}
 
 
         public IActionResult Privacy()
