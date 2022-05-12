@@ -317,11 +317,11 @@ namespace MyCollections.Controllers
             return View(userProfile);
         }
 
-        public void DeleteUserData(User user)
-        {
+        //public void DeleteUserData(User user)
+        //{
             
 
 
-        }
+        //}
     }
 }

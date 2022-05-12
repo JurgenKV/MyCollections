@@ -26,69 +26,71 @@
 
 <div>
     <text> Collection Tools:  </text>
+    <form asp-controller="Collection" method="post">
+        <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#staticBackdropCreate">
+            Create
+        </button>
+        <button type="button" class="btn btn-outline-info" onclick="Update('chek', this)">
+            Update
+        </button>
 
-    <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#staticBackdropCreate">
-        Create
-    </button>
-    <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#staticBackdropUpdate">
-        Update
-    </button>
-    <input class="" type="submit" name="submit" value="Update" formmethod="post" formaction="~/Collection/UpdateCollection" style="border-color: white" />
-    <input class="btn btn-outline-danger" type="submit" name="submit" value="Delete" formmethod="post" formaction="~/User/DeleteCollection" style="border-color: white" />
+        @*<input class="" type="submit" name="submit" value="Update" formmethod="post" formaction="~/Collection/UpdateCollection" style="border-color: white" />*@
+        <input class="btn btn-outline-danger" type="submit" name="submit" value="Delete" formmethod="post" formaction="~/Collection/DeleteCollection" style="border-color: white" />
+        <input name="userName" value="@Model.User.UserName" style="visibility: hidden" />
+        @if (Model.UserCollections != null)
+        {
+            <table class="table table-borderless">
+                <thead class="thead-light text-dark">
+                    <tr>
+                        <th>
+                            Выбор
+                        </th>
 
-    @if (Model.UserCollections != null)
-    {
-        <table class="table table-borderless">
-            <thead class="thead-light text-dark">
-                <tr>
-                    <th>
-                        <p>Выбор</p>
-                    </th>
+                        <th>
+                            Картинка
+                        </th>
 
-                    <th>
-                        Картинка
-                    </th>
+                        <th>
+                            Название
+                        </th>
+                        <th>
 
-                    <th>
-                        Название
-                    </th>
-                    <th>
+                        </th>
+                        <th>
+                            Описание
+                        </th>
+                        <th>
 
-                    </th>
-                    <th>
-                        Описание
-                    </th>
-                    <th>
+                        </th>
 
-                    </th>
+                    </tr>
+                </thead>
 
-                </tr>
-            </thead>
+                @foreach (var i in Model.UserCollections)
+                {
+                    <tr>
+                        <td>
+                            <input type="radio" name="id" value="@i.Id" class="check">
+                        </td>
+                        <td>
+                            <p> Image </p>
+                        </td>
+                        <td>
+                            @Html.DisplayFor(mitem => i.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(mitem => i.Tag)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(mitem => i.Description)
+                        </td>
 
-            @foreach (var i in Model.UserCollections)
-            {
-                <tr>
-                    <td>
-                        <input type="radio" name="usersId" value="@i.Id" class="chek">
-                    </td>
-                    <td>
-                        <p> Image </p>
-                    </td>
-                    <td>
-                        @Html.DisplayFor(mitem => i.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(mitem => i.Tag)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(mitem => i.Description)
-                    </td>
+                    </tr>
+                }
 
-                </tr>
-            }
-
-        </table>
-    }
+            </table>
+        }
+    </form>
 </div>
 
 <!-- Modal -->
@@ -132,7 +134,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="staticBackdropUpdate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+@*<div class="modal fade" id="staticBackdropUpdate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -169,14 +171,20 @@
             </form>
         </div>
     </div>
-</div>
+</div>*@
 
-@*<script>
-    var myModal = document.getElementById('myModal')
-    var myInput = document.getElementById('myInput')
+<script>
+    function Update(className, elem) {
+        var elements = document.getElementsByClassName(className);
 
-    myModal.addEventListener('shown.bs.modal', function () {
-        myInput.focus();
-    })
-</script>*@
-
+        if (elem.checked) {
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].checked = true;
+            }
+        } else {
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].checked = false;
+            }
+        }
+    }
+</script>

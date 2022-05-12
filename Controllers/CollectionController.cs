@@ -23,13 +23,13 @@ namespace MyCollections.Controllers
         private readonly SignInManager<User> _signInManager;
 
 
-        public CollectionController(ILogger<CollectionController> logger, ApplicationContext context, UserManager<User> userManager, SignInManager<User> signInManager)
+        public CollectionController(ILogger<CollectionController> logger, ApplicationContext context,
+            UserManager<User> userManager, SignInManager<User> signInManager)
         {
             _logger = logger;
             _db = context;
             _userManager = userManager;
             _signInManager = signInManager;
-
         }
 
         public IActionResult Items(string str)
@@ -47,10 +47,9 @@ namespace MyCollections.Controllers
 
         [HttpPost]
         public IActionResult ItemProfile(string id)
-         {
-             
+        {
             return View(_db.Items.Find(id));
-         }
+        }
 
         public IActionResult SetItemLike(string user)
         {
@@ -70,23 +69,31 @@ namespace MyCollections.Controllers
 
         public IActionResult SetItemComment(string itemId, string comment)
         {
-
             return View("ItemProfile");
         }
+
         [HttpPost]
-        public async Task<IActionResult> AddCollection(string idUser, string name, string tag, string description, IFormFile image )
+        public async Task<IActionResult> AddCollection(string idUser, string name, string tag, string description,
+            IFormFile image)
         {
             string path = null;
 
             if (image != null)
             {
-                // путь к папке Files
-                path = "wwwroot/ImageStorage/CollectionImage/" + idUser +"/"+ image.FileName;
-                // сохраняем файл в папку Files в каталоге wwwroot
-                using (var fileStream = new FileStream(path, FileMode.Create))
+                path = "wwwroot/ImageStorage/CollectionImage/" + idUser + "/" + image.FileName;
+                DirectoryInfo dirInfo = new DirectoryInfo("wwwroot/ImageStorage/CollectionImage/" + idUser);
+                if (!dirInfo.Exists)
                 {
+                    dirInfo.Create();
+                    await using var fileStream = new FileStream(path, FileMode.Create);
                     await image.CopyToAsync(fileStream);
                 }
+                else
+                {
+                    await using var fileStream = new FileStream(path, FileMode.Create);
+                    await image.CopyToAsync(fileStream);
+                }
+                
             }
 
             UserCollection userCollection = new UserCollection
@@ -103,7 +110,7 @@ namespace MyCollections.Controllers
             await _db.SaveChangesAsync();
             User user = _db.User.First(i => i.Id == idUser);
 
-            return RedirectToAction("UserProfile", "User", new{ user.UserName });
+            return RedirectToAction("UserProfile", "User", new { user.UserName });
         }
 
         [HttpPost]
@@ -129,18 +136,33 @@ namespace MyCollections.Controllers
                 {
                     System.IO.File.Delete(userCollection.Image);
                 }
+
                 using var fileStream = new FileStream(path, FileMode.Create);
                 image.CopyTo(fileStream);
             }
 
-            return RedirectToAction("UserProfile", "User", new { name });
+            _db.SaveChanges();
+            return RedirectToAction("UserProfile", "User", new { user.UserName });
         }
 
         [HttpPost]
-        public IActionResult DeleteCollection()
+        public IActionResult DeleteCollection(string userName, string id)
         {
-            return RedirectToAction("UserProfile", "User");
-        }
+            UserCollection userCollection = _db.UserCollections.First(i => i.Id == id);
 
+            try
+            {
+                if(!userCollection.Image.Equals(null))
+                    System.IO.File.Delete(userCollection.Image);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+
+            _db.UserCollections.Remove(userCollection);
+            _db.SaveChanges();
+            return RedirectToAction("UserProfile", "User", new { userName });
+        }
     }
 }
