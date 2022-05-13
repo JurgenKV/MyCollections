@@ -26,15 +26,14 @@
 <p></p>
 @if (User.Identity.IsAuthenticated)
 {
-    <form asp-controller="Collection" method="post">
+    <form method="post">
 
         <div class="mb-3">
             <label for="com" class="form-label fs-4"> Ваш комментарий</label>
-            @*<input type="text" class="form-control" id="com" name="comment" value="">*@
-            <textarea class="form-control" name="comment" ></textarea>
+            <textarea class="form-control" name="comment"></textarea>
         </div>
 
-        <button type="submit" class="btn btn-primary" name="userName" value="@User.Identity.Name" formaction="~/Collection/SetComment">Отправить</button>
+        <button type="submit" class="btn btn-primary" name="userName" value="@User.Identity.Name" formaction="~/Collection/SetItemComment" onSubmit="window.location.reload()">Отправить</button>
         <input name="idItem" value="@Model.item.Id" style="visibility: hidden"/>
     </form>
 }
@@ -45,25 +44,33 @@
 <p></p>
 
 <div class="widget widget-comments open" id="comments">
-    <div class="block-title">Комментарии</div>
+    <div class="block-title">Комментарии:</div>
 
     <ol class="list-group list-group-numbered">
         @if (Model.ItemComments != null)
         {
+            <p style="visibility: hidden"> @Model.ItemComments.OrderByDescending(i => i.Id);</p>
             @foreach (var i in Model.ItemComments)
             {
-                
-                    <li class="list-group-item d-flex justify-content-between align-items-start">
-                        <div class="ms-2 me-auto">
-                            <div class="fw-bold">
-                                <form method="post" asp-action="UserProfile" asp-controller="User">
-                                <input type="submit" name="button" value="@i.UserName" class="btn btn-link text-dark" formaction="~/User/UserProfile">
-                                </form>
-                            </div>
-                            @i.Comment
+                <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold">
+                            <form method="post" asp-action="UserProfile" asp-controller="User">
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <input type="submit" name="button" value="@i.UserName" class="btn btn-link text-dark" formaction="~/User/UserProfile">
+                                }
+                                else
+                                {
+                                    <a class="text-dark">@i.UserName</a>
+                                }
+                            </form>
+                            <a>@i.Date</a>
+                            <p>----------------</p>
                         </div>
-                    </li>
-                    
+                        @i.Comment
+                    </div>
+                </li>
             }
         }
     </ol>

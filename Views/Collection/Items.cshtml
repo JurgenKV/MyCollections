@@ -19,13 +19,12 @@
 
 <div asp-controller="Collection">
 
-
     <table table table-borderless table-bordered>
         <thead class="text-dark">
         <tr>
             <th> </th><th> </th><th> </th><th> </th> <th> </th>
         </tr>
-            </thead>
+        </thead>
         @foreach (var i in Model)
         {
             <tr>
@@ -47,7 +46,7 @@
                     @Html.DisplayFor(item => i.Description)
                 </td>
                 <td>
-                    @if (!User.Identity.IsAuthenticated)
+                    @if (User.Identity.IsAuthenticated)
                     {
                         @if (i.ItemLikes != null)
                         {
@@ -55,37 +54,47 @@
                             {
                                 if (like.UserId == User.Identity.Name)
                                 {
-                                    <div method="post" asp-action="SetItemLike">
-                                        <input id="toggle-heart" type="checkbox" name="usersId" value="@User.Identity.Name" class="chek" formaction="~/Collection/SetItemLike">
+                                    @*<form method="post" asp-action="SetItemLike">
+
+                                        <input type="submit" name="usersId" value="@User.Identity.Name" class="chek" formaction="~/Collection/SetItemLike">
                                         <label for="toggle-heart" aria-label="like">❤</label>
-                                    </div>
+                                        
+                                    </form>*@
+                                    <form id="myForm" asp-action="SetItemLike">
+                                        <input type="checkbox" id="@i.Id" onclick="sendForm()"/>
+                                    </form>
                                 }
-                                @Html.DisplayFor(item => i.ItemLikes.Count())
                             }
                         }
                         else
                         {
-                            <div method="post" asp-action="SetItemLike">
+                            @*<form method="post" asp-action="SetItemLike">
                                 <div align="center">
-                                    <input id="toggle-heart" type="checkbox" name="usersId" value="" class="chek" formaction="~/Collection/SetItemLike">
+                                    <input type="checkbox" name="usersId" value="" class="chek" formaction="~/Collection/SetItemLike">
                                     <label for="toggle-heart" aria-label="like">❤</label>
                                     <p>0</p>
                                 </div>
-                            </div>
+                            </form>*@
+
+                            <form id="myForm" asp-action="SetItemLike">
+                                <input type="checkbox" name="UserId" id="@i.Id" onclick="sendForm(@i.Id)"/>
+                                <label for="toggle-heart" aria-label="like">❤</label>
+                            </form>
                         }
                     }
+
                 </td>
                 <td>
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <div>
-                            @if (i.ItemLikes != null)
-                            {
-
-                                <p> @i.ItemLikes.Count() </p>
-                            }
-                        </div>
-                    }
+                    <div>
+                        @if (i.ItemLikes != null)
+                        {
+                            <p>Likes: @i.ItemLikes.Count() </p>
+                        }
+                        else
+                        {
+                            <p>Likes: 0 </p>
+                        }
+                    </div>
                 </td>
             </tr>
         }
@@ -106,6 +115,12 @@
             for (var i = 0; i < l; i++) {
                 elements[i].checked = false;
             }
+        }
+    }
+
+    function sendForm(id) {
+        if (document.getElementById(id).checked) {
+            document.getElementById("myForm").submit();
         }
     }
 </script>

@@ -53,8 +53,22 @@ namespace MyCollections.Controllers
             ItemProfileViewModel itemProfileViewModel = new ItemProfileViewModel
             {
                 item = _db.Items.First(i => i.Id == id),
-                ItemComments = _db.ItemComments.Where(i=>i.ItemId== id),
+                ItemComments = _db.ItemComments.Where(i => i.ItemId == id),
                 ItemLikes = _db.ItemLikes.Where(i=>i.ItemId == id)
+            };
+
+            return View(itemProfileViewModel);
+
+        }
+
+        public IActionResult ItemProfile(string id, string userName)
+        {
+
+            ItemProfileViewModel itemProfileViewModel = new ItemProfileViewModel
+            {
+                item = _db.Items.First(i => i.Id == id),
+                ItemComments = _db.ItemComments.Where(i => i.ItemId == id),
+                ItemLikes = _db.ItemLikes.Where(i => i.ItemId == id)
             };
 
             return View(itemProfileViewModel);
@@ -75,11 +89,6 @@ namespace MyCollections.Controllers
             }
 
             return RedirectToAction("Items", "Collection");
-        }
-
-        public IActionResult SetItemComment(string itemId, string comment)
-        {
-            return View("ItemProfile");
         }
 
         [HttpPost]
@@ -177,6 +186,7 @@ namespace MyCollections.Controllers
 
         public ActionResult GetCollectionImage(string imagePath)
         {
+
             try
             {
                 if (!string.IsNullOrEmpty(imagePath))
@@ -185,7 +195,7 @@ namespace MyCollections.Controllers
                 }
                 else
                 {
-                    return File("wwwroot/ImageStorage/default", "image/png");
+                    return File("wwwroot/ImageStorage/default.png", "image/png");
                 }
             }
             catch (Exception ex)
@@ -197,21 +207,22 @@ namespace MyCollections.Controllers
             return null;
         }
 
-        public IActionResult SetComment(string userName, string idItem, string comment)
+        public IActionResult SetItemComment(string userName, string idItem, string comment)
         {
-            //User user = _db.User.First(i => i.UserName == userName);
+            if (comment == null) return RedirectToAction("ItemProfile", new { id = idItem , userName });
+
             ItemComment itemComment = new ItemComment
             {
                 ItemId = idItem,
                 Comment = comment,
                 UserName = User.Identity.Name,
-                Date = DateTime.Now.ToString()
+                Date = DateTime.Now.ToString(CultureInfo.InvariantCulture)
             };
 
             _db.ItemComments.Add(itemComment);
             _db.SaveChanges();
 
-            return RedirectToAction("ItemProfile", new {idItem});
+            return RedirectToAction("ItemProfile", new { id = idItem, userName });
         }
 
         public string GetUserName(string id)

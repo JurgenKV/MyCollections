@@ -73,7 +73,7 @@
                             <input type="radio" name="id" value="@i.Id" class="check">
                         </td>
                         <td>
-                            <img src="@Url.Action("GetCollectionImage", "Collection", new { imagePath = @i.Image })" style="width: 150px; height: 200px;" />
+                            <img src="@Url.Action("GetCollectionImage", "Collection", new { imagePath = @i.Image })" style="width: 150px; height: 200px;" alt=""/>
                         </td>
                         <td>
                             @Html.DisplayFor(mitem => i.Name)

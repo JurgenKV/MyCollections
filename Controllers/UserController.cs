@@ -259,8 +259,6 @@ namespace MyCollections.Controllers
                     {
                         await _userManager.DeleteAsync(user);
                         
-
-
                         if (User.Identity.Name == user.UserName)
                         {
                             toOut = true;
