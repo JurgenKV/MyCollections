@@ -8,6 +8,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MyCollections.Models;
@@ -48,7 +49,16 @@ namespace MyCollections.Controllers
         [HttpPost]
         public IActionResult ItemProfile(string id)
         {
-            return View(_db.Items.Find(id));
+
+            ItemProfileViewModel itemProfileViewModel = new ItemProfileViewModel
+            {
+                item = _db.Items.First(i => i.Id == id),
+                ItemComments = _db.ItemComments.Where(i=>i.ItemId== id),
+                ItemLikes = _db.ItemLikes.Where(i=>i.ItemId == id)
+            };
+
+            return View(itemProfileViewModel);
+
         }
 
         public IActionResult SetItemLike(string user)
@@ -112,7 +122,7 @@ namespace MyCollections.Controllers
 
             return RedirectToAction("UserProfile", "User", new { user.UserName });
         }
-
+        ///update - понять как рпердать данные в форму из которой будет задействована эта функция
         [HttpPost]
         public IActionResult UpdateCollection(string idUser, string id, string name, string tag, string description,
             IFormFile image)
@@ -152,7 +162,7 @@ namespace MyCollections.Controllers
 
             try
             {
-                if(!userCollection.Image.Equals(null))
+                if(userCollection.Image != null)
                     System.IO.File.Delete(userCollection.Image);
             }
             catch (Exception ex)
@@ -163,6 +173,52 @@ namespace MyCollections.Controllers
             _db.UserCollections.Remove(userCollection);
             _db.SaveChanges();
             return RedirectToAction("UserProfile", "User", new { userName });
+        }
+
+        public ActionResult GetCollectionImage(string imagePath)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(imagePath))
+                {
+                    return File(imagePath, "image/png");
+                }
+                else
+                {
+                    return File("wwwroot/ImageStorage/default", "image/png");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Data);
+                
+            }
+
+            return null;
+        }
+
+        public IActionResult SetComment(string userName, string idItem, string comment)
+        {
+            //User user = _db.User.First(i => i.UserName == userName);
+            ItemComment itemComment = new ItemComment
+            {
+                ItemId = idItem,
+                Comment = comment,
+                UserName = User.Identity.Name,
+                Date = DateTime.Now.ToString()
+            };
+
+            _db.ItemComments.Add(itemComment);
+            _db.SaveChanges();
+
+            return RedirectToAction("ItemProfile", new {idItem});
+        }
+
+        public string GetUserName(string id)
+        {
+           User user = _db.User.First(i=>i.Id == id);
+
+           return user.UserName;
         }
     }
 }

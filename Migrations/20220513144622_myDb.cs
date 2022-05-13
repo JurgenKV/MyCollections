@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MyCollections.Migrations
 {
-    public partial class MyDb : Migration
+    public partial class myDb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -193,34 +193,13 @@ namespace MyCollections.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CustomFields",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Data = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ItemId = table.Column<string>(type: "nvarchar(450)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CustomFields", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_CustomFields_Items_ItemId",
-                        column: x => x.ItemId,
-                        principalTable: "Items",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ItemComments",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ItemId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Date = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -281,6 +260,34 @@ namespace MyCollections.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "CustomFields",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Data = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ItemId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    UserCollectionId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CustomFields", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CustomFields_Items_ItemId",
+                        column: x => x.ItemId,
+                        principalTable: "Items",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_CustomFields_UserCollections_UserCollectionId",
+                        column: x => x.UserCollectionId,
+                        principalTable: "UserCollections",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -334,6 +341,11 @@ namespace MyCollections.Migrations
                 name: "IX_CustomFields_ItemId",
                 table: "CustomFields",
                 column: "ItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CustomFields_UserCollectionId",
+                table: "CustomFields",
+                column: "UserCollectionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ItemComments_ItemId",

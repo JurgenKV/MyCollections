@@ -13,6 +13,7 @@ namespace MyCollections.Models
         public string Name { get; set; }
         public string Data { get; set; }
         public string ItemId { get; set; }
+        public string UserCollectionId { get; set; }
 
     }
 }

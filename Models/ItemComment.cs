@@ -9,11 +9,11 @@ namespace MyCollections.Models
 {
     public class ItemComment
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string Comment { get; set; }
-        public string UserId { get; set; }
+        public string UserName { get; set; }
         public string ItemId { get; set; }
         public string Date { get; set; }
     }

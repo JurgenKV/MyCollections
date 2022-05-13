@@ -10,8 +10,8 @@ using MyCollections.Models;
 namespace MyCollections.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220512142856_MyDb")]
-    partial class MyDb
+    [Migration("20220513144622_myDb")]
+    partial class myDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -190,9 +190,14 @@ namespace MyCollections.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserCollectionId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ItemId");
+
+                    b.HasIndex("UserCollectionId");
 
                     b.ToTable("CustomFields");
                 });
@@ -236,7 +241,7 @@ namespace MyCollections.Migrations
                     b.Property<string>("ItemId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("UserName")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -439,6 +444,10 @@ namespace MyCollections.Migrations
                     b.HasOne("MyCollections.Models.Item", null)
                         .WithMany("CustomFields")
                         .HasForeignKey("ItemId");
+
+                    b.HasOne("MyCollections.Models.UserCollection", null)
+                        .WithMany("CustomFields")
+                        .HasForeignKey("UserCollectionId");
                 });
 
             modelBuilder.Entity("MyCollections.Models.ItemComment", b =>
@@ -480,6 +489,8 @@ namespace MyCollections.Migrations
 
             modelBuilder.Entity("MyCollections.Models.UserCollection", b =>
                 {
+                    b.Navigation("CustomFields");
+
                     b.Navigation("Items");
                 });
 #pragma warning restore 612, 618

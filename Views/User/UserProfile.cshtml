@@ -30,7 +30,7 @@
         <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#staticBackdropCreate">
             Create
         </button>
-        <button type="button" class="btn btn-outline-info" onclick="Update('chek', this)">
+        <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" onclick="Update('chek', this)">
             Update
         </button>
 
@@ -73,7 +73,7 @@
                             <input type="radio" name="id" value="@i.Id" class="check">
                         </td>
                         <td>
-                            <p> Image </p>
+                            <img src="@Url.Action("GetCollectionImage", "Collection", new { imagePath = @i.Image })" style="width: 150px; height: 200px;" />
                         </td>
                         <td>
                             @Html.DisplayFor(mitem => i.Name)
@@ -134,7 +134,7 @@
     </div>
 </div>
 
-@*<div class="modal fade" id="staticBackdropUpdate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="staticBackdropUpdate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -171,7 +171,7 @@
             </form>
         </div>
     </div>
-</div>*@
+</div>
 
 <script>
     function Update(className, elem) {

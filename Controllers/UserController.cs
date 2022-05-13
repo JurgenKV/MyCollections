@@ -43,7 +43,6 @@ namespace MyCollections.Controllers
                 }
             }
             
-            // return View(_userManager.Users.ToList());
             return View();
         }
 

@@ -20,11 +20,12 @@
 <div asp-controller="Collection">
 
 
-    <table>
+    <table table table-borderless table-bordered>
+        <thead class="text-dark">
         <tr>
             <th> </th><th> </th><th> </th><th> </th> <th> </th>
         </tr>
-
+            </thead>
         @foreach (var i in Model)
         {
             <tr>
@@ -37,8 +38,8 @@
                 <td>
                     <form method="post" asp-action="ItemProfile">
                         <p>
-                            <input name="id" , value="@i.Id" style="visibility: hidden" />
-                            <input type="submit" name="button" value="@i.Name" formaction="~/Collection/ItemProfile">
+                            <input name="id" , value="@i.Id" style="visibility: hidden"/>
+                            <input type="submit" name="button" value="@i.Name" class="btn btn-link text-dark" formaction="~/Collection/ItemProfile">
                         </p>
                     </form>
                 </td>
@@ -80,8 +81,8 @@
                         <div>
                             @if (i.ItemLikes != null)
                             {
-                                
-                            <p> @i.ItemLikes.Count() </p>
+
+                                <p> @i.ItemLikes.Count() </p>
                             }
                         </div>
                     }

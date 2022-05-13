@@ -24,6 +24,9 @@ namespace MyCollections.Models
             //    .HasOne(p => p.UserId)
             //    .WithMany(t=> t)
             //    .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<ItemComment>()
+                .Property(f => f.Id)
+                .ValueGeneratedOnAdd();
             base.OnModelCreating(modelBuilder);
         }
 

@@ -6,10 +6,10 @@ using MyCollections.Models;
 
 namespace MyCollections.ViewModels
 {
-    public class ItemSearchViewModel
+    public class ItemProfileViewModel
     {
-        private Item CurrentItem;
-        private ICollection<ItemComment> itemComments;
-        private ICollection<User> users;
+        public Item item;
+        public IQueryable<ItemLike> ItemLikes;
+        public IQueryable<ItemComment> ItemComments;
     }
 }
