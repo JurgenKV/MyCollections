@@ -72,7 +72,7 @@ namespace MyCollections.Controllers
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, false);
-                    return RedirectToAction("Index", "User");
+                    return RedirectToAction("ItemsCatalog", "Collection");
                 }
                 else
                 {
@@ -117,7 +117,7 @@ namespace MyCollections.Controllers
 
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                     {
-                        return Redirect(model.ReturnUrl);
+                        return RedirectToAction("ItemsCatalog", "Collection");
                     }
                     else
                     {
@@ -310,6 +310,7 @@ namespace MyCollections.Controllers
             userProfile.UserCollections =  _db.UserCollections.Where(coll => coll.UserId.Equals(user.Id));
 
             userProfile.User = user;
+            userProfile.CustomField = new CustomField();
 
             return View(userProfile);
         }

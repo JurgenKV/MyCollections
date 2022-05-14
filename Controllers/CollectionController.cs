@@ -33,46 +33,63 @@ namespace MyCollections.Controllers
             _signInManager = signInManager;
         }
 
-        public IActionResult Items(string str)
+        public IActionResult ItemsCatalog(string str)
         {
-            ICollection<Item> itemsList = _db.Items.ToList();
+            ItemsCatalogViewModel itemsCatalogViewModel = new ItemsCatalogViewModel();
+            itemsCatalogViewModel.TopFiveCollections = new List<UserCollection>();
+            itemsCatalogViewModel.Items = !string.IsNullOrEmpty(str) ? _db.Items.Where(item => item.Tag == str || item.Name == str) : _db.Items;
 
-            if (!string.IsNullOrEmpty(str))
+            if (User.Identity.IsAuthenticated)
             {
-                var item = itemsList.Where(item => item.Tag == str);
-                return View(item.ToList());
+                User user = _db.User.First(i => i.UserName == User.Identity.Name);
+                itemsCatalogViewModel.UserCollections = _db.UserCollections.Where(col => col.UserId == user.Id).ToList();
             }
 
-            return View(itemsList.ToList());
+            itemsCatalogViewModel.ItemLikes = new ItemLike();
+            if (_db.UserCollections != null && _db.UserCollections.Count() > 5)
+            {
+                //IQueryable<UserCollection> userCollections = _db.UserCollections;
+                List<UserCollection> orderByDescending = _db.UserCollections.OrderBy(i => i.Items.Count()).ToList();
+
+                for (int i = 0; i < 5; i++)
+                {
+                    try
+                    {
+                        itemsCatalogViewModel.TopFiveCollections.Add(orderByDescending[i]);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Data);
+                    }
+                }
+            }
+
+            return View(itemsCatalogViewModel);
         }
 
         [HttpPost]
         public IActionResult ItemProfile(string id)
         {
-
             ItemProfileViewModel itemProfileViewModel = new ItemProfileViewModel
             {
-                item = _db.Items.First(i => i.Id == id),
-                ItemComments = _db.ItemComments.Where(i => i.ItemId == id),
-                ItemLikes = _db.ItemLikes.Where(i=>i.ItemId == id)
-            };
-
-            return View(itemProfileViewModel);
-
-        }
-
-        public IActionResult ItemProfile(string id, string userName)
-        {
-
-            ItemProfileViewModel itemProfileViewModel = new ItemProfileViewModel
-            {
-                item = _db.Items.First(i => i.Id == id),
+                Item = _db.Items.First(i => i.Id == id),
                 ItemComments = _db.ItemComments.Where(i => i.ItemId == id),
                 ItemLikes = _db.ItemLikes.Where(i => i.ItemId == id)
             };
 
             return View(itemProfileViewModel);
+        }
 
+        public IActionResult ItemProfile(string id, string userName)
+        {
+            ItemProfileViewModel itemProfileViewModel = new ItemProfileViewModel
+            {
+                Item = _db.Items.First(i => i.Id == id),
+                ItemComments = _db.ItemComments.Where(i => i.ItemId == id),
+                ItemLikes = _db.ItemLikes.Where(i => i.ItemId == id)
+            };
+
+            return View(itemProfileViewModel);
         }
 
         public IActionResult SetItemLike(string user)
@@ -88,7 +105,7 @@ namespace MyCollections.Controllers
                 }
             }
 
-            return RedirectToAction("Items", "Collection");
+            return RedirectToAction("ItemsCatalog", "Collection");
         }
 
         [HttpPost]
@@ -112,7 +129,6 @@ namespace MyCollections.Controllers
                     await using var fileStream = new FileStream(path, FileMode.Create);
                     await image.CopyToAsync(fileStream);
                 }
-                
             }
 
             UserCollection userCollection = new UserCollection
@@ -131,6 +147,7 @@ namespace MyCollections.Controllers
 
             return RedirectToAction("UserProfile", "User", new { user.UserName });
         }
+
         ///update - понять как рпердать данные в форму из которой будет задействована эта функция
         [HttpPost]
         public IActionResult UpdateCollection(string idUser, string id, string name, string tag, string description,
@@ -171,7 +188,7 @@ namespace MyCollections.Controllers
 
             try
             {
-                if(userCollection.Image != null)
+                if (userCollection.Image != null)
                     System.IO.File.Delete(userCollection.Image);
             }
             catch (Exception ex)
@@ -186,7 +203,6 @@ namespace MyCollections.Controllers
 
         public ActionResult GetCollectionImage(string imagePath)
         {
-
             try
             {
                 if (!string.IsNullOrEmpty(imagePath))
@@ -201,7 +217,6 @@ namespace MyCollections.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Data);
-                
             }
 
             return null;
@@ -209,7 +224,7 @@ namespace MyCollections.Controllers
 
         public IActionResult SetItemComment(string userName, string idItem, string comment)
         {
-            if (comment == null) return RedirectToAction("ItemProfile", new { id = idItem , userName });
+            if (comment == null) return RedirectToAction("ItemProfile", new { id = idItem, userName });
 
             ItemComment itemComment = new ItemComment
             {
@@ -227,9 +242,49 @@ namespace MyCollections.Controllers
 
         public string GetUserName(string id)
         {
-           User user = _db.User.First(i=>i.Id == id);
+            User user = _db.User.First(i => i.Id == id);
 
-           return user.UserName;
+            return user.UserName;
         }
+
+        
+        public IActionResult CollectionItems(string IdCollection, string IdUser)
+        {
+            CollectionItemsViewModel collectionItemsViewModel = new CollectionItemsViewModel();
+            collectionItemsViewModel.User = new User();
+            collectionItemsViewModel.Items = new List<Item>();
+            collectionItemsViewModel.UserCollection = new UserCollection();
+
+            collectionItemsViewModel.User = _db.User.First(i => i.Id == IdUser);
+            collectionItemsViewModel.UserCollection = _db.UserCollections.First(i => i.Id == IdCollection);
+            List<CollectionItem> collectionItemList = _db.CollectionItems.Where(i => i.UserCollectionId == IdCollection).ToList();
+
+            foreach (var item in collectionItemList)
+            {
+                collectionItemsViewModel.Items.Add(_db.Items.First(i => i.Id == item.ItemId));
+            }
+
+            collectionItemsViewModel.CustomFields = new List<CustomField>();
+
+            return View(collectionItemsViewModel);
+        }
+
+        public IActionResult AddCollectionItem(string IdCollection, string IdItem)
+        {
+            CollectionItem collectionItem = new CollectionItem
+            {
+                ItemId = IdItem,
+                UserCollectionId = IdCollection
+            };
+            int a = _db.CollectionItems.Count(i => i.ItemId == IdItem && i.UserCollectionId == IdCollection);
+            if (a == 0)
+            {
+                _db.CollectionItems.Add(collectionItem);
+                _db.SaveChanges();
+            }
+
+            return RedirectToAction("ItemsCatalog");
+        }
+
     }
 }

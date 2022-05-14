@@ -10,8 +10,8 @@ using MyCollections.Models;
 namespace MyCollections.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220513144622_myDb")]
-    partial class myDb
+    [Migration("20220514144009_MyDb")]
+    partial class MyDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

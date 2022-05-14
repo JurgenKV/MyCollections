@@ -8,7 +8,7 @@ namespace MyCollections.ViewModels
 {
     public class ItemProfileViewModel
     {
-        public Item item;
+        public Item Item;
         public IQueryable<ItemLike> ItemLikes;
         public IQueryable<ItemComment> ItemComments;
     }

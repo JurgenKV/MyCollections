@@ -6,10 +6,11 @@ using MyCollections.Models;
 
 namespace MyCollections.ViewModels
 {
-    public class UserProfileViewModel
+    public class CollectionItemsViewModel
     {
         public User User;
-        public IQueryable<UserCollection> UserCollections;
-        public CustomField CustomField;
+        public UserCollection UserCollection;
+        public List<Item> Items;
+        public List<CustomField> CustomFields;
     }
 }

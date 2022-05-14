@@ -1,0 +1,189 @@
+﻿@model MyCollections.ViewModels.ItemsCatalogViewModel
+
+
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+
+}
+@*<link href="~/css/ItemsPage.css" rel="stylesheet"/>*@
+<link href="~/css/site.css" rel="stylesheet"/>
+<h2>Catalog</h2>
+
+<form method="post" asp-action="ItemsCatalog">
+    <p>
+        <input type="search" name="str" placeholder="Поиск по сайту">
+        <input type="submit" value="Найти" formaction="~/Collection/ItemsCatalog">
+    </p>
+</form>
+
+
+<div class="container">
+    <main>
+
+        <div class="row g-5">
+            <div class="col-md-5 col-lg-4 order-md-last">
+                <h4 class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-primary">Largest Collections</span>
+                    <span class="badge bg-primary rounded-pill">3</span>
+                </h4>
+
+                <ul class="list-group mb-3">
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        @foreach (var topFive in Model.TopFiveCollections)
+                        {
+                            <li class="list-group-item d-flex justify-content-between lh-sm">
+
+                                <form method="post" asp-action="CollectionItems" asp-controller="Collection">
+                                    <p>
+                                        <input type="submit" name="button" value="@topFive.Name" class="btn btn-link align-content-center" formaction="~/Collection/CollectionItems">
+                                        <input name="IdUser" value="@topFive.UserId" style="visibility: hidden"/>
+                                        <input name="IdCollection" value="@topFive.Id" style="visibility: hidden"/>
+
+                                    </p>
+                                </form>
+
+                            </li>
+                        }
+                    }
+                </ul>
+
+            </div>
+
+            <div class="col-md-7 col-lg-8">
+                @*<form method="post" asp-action="ItemsCatalog">
+                    <p>
+                        <input type="search" name="str" placeholder="Поиск по сайту">
+                        <input type="submit" value="Найти" formaction="~/Collection/ItemsCatalog">
+                    </p>
+                </form>*@
+                <h4 class="mb-3">Items</h4>
+                <form asp-controller="Collection">
+                    <table class="table table-borderless table-bordered">
+                        <thead class="text-dark">
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="Check" onclick="CheckAll('chek', this)"> Check all
+                            </th>
+
+                            <th>
+                                Image
+                            </th>
+
+                            <th>
+                                Tag
+                            </th>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Description
+                            </th>
+                            <td>
+                                Likes
+                            </td>
+                            <td>
+
+                            </td>
+                        </tr>
+                        </thead>
+
+                        @foreach (var i in Model.Items)
+                        {
+                            <tr>
+                                <td>
+                                    @*<input type="checkbox" name="usersId" value="@i.Id" class="chek" onclick="sendForm(@i.Id)">*@
+                                    <form id="myForm" asp-controller="Collection" asp-action="SetItemLike" method="post">
+                                        <input type="checkbox" name="UserId" id="@i.Id" onclick="sendForm(@i.Id)"/>
+                                        <label for="toggle-heart" aria-label="like">❤</label>
+                                    </form>
+                                </td>
+                                <td>
+                                    @*<img src="@Url.Action("", "Collection" , new { imagePath=@i.Image })" style="width: 150px; height: 200px;" alt="" />*@
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(item => i.Tag)
+
+                                </td>
+                                <td>
+                                    <form method="post" asp-action="ItemProfile">
+                                        <p>
+                                            <input name="id" , value="@i.Id" style="visibility: hidden"/>
+                                            <input type="submit" name="button" value="@i.Name" class="btn btn-link text-dark" formaction="~/Collection/ItemProfile">
+                                        </p>
+                                    </form>
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(item => i.Description)
+                                </td>
+                                <td>
+                                    @if (i.ItemLikes != null)
+                                    {
+                                        <p>Likes: @i.ItemLikes.Count() </p>
+                                    }
+                                    else
+                                    {
+                                        <p>Likes: 0 </p>
+                                    }
+                                </td>
+                                <td>
+                                    @if (User.Identity.IsAuthenticated && (Model.UserCollections != null))
+                                    {
+                                        <form method="post" asp-action="AddCollectionItem">
+
+                                            <div class="dropdown">
+                                                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    В коллекцию
+                                                </a>
+
+                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+
+                                                    @foreach (var collection in Model.UserCollections)
+                                                    {
+                                                        <input name="IdCollection" , value="@collection.Id" style="visibility: hidden"/>
+                                                        <input name="IdItem" value="@i.Id" style="visibility: hidden"/>
+                                                        <li>
+                                                            <input type="submit" name="CollectionName" value="@collection.Name" class="btn btn-link text-dark" formaction="~/Collection/AddCollectionItem">
+                                                        </li>
+                                                    }
+
+                                                </ul>
+                                            </div>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function CheckAll(className, elem) {
+            var elements = document.getElementsByClassName(className);
+            var l = elements.length;
+            if (elem.checked) {
+                for (var i = 0; i < l; i++) {
+                    elements[i].checked = true;
+                }
+            } else {
+                for (var i = 0; i < l; i++) {
+                    elements[i].checked = false;
+                }
+            }
+        }
+
+        function sendForm(id) {
+            if (document.getElementById(id).checked) {
+                document.getElementById("myForm").submit();
+            }
+        }
+    </script>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+</div>

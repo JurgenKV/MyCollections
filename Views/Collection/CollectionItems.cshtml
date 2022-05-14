@@ -1,0 +1,92 @@
+﻿@model MyCollections.ViewModels.CollectionItemsViewModel;
+
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+
+<div class="widget widget-comments open" id="comments">
+    <div class="block-title">[@if (Model.Items != null)
+                             {
+                                 @Model.Items.Count
+                                 
+                             }] Коллекция @Model.UserCollection.Name пользователя @Model.User.UserName
+        </div>
+
+    @if (Model.Items != null)
+    {
+        <form asp-controller="User">
+            <text> Admin Bar:  </text>
+            <input class="btn btn-outline-danger" type="submit" name="submit" value="Delete" formmethod="post" formaction="~/User/MultiplyDelete" style="border-color: white" />
+            <input class="btn btn-outline-warning" type="submit" name="submit" value="Block" formmethod="post" formaction="~/User/MultiplyBlock" style="border-color: white" />
+            <table class="table table-borderless table-bordered">
+                <thead class="text-dark">
+                <tr>
+                    <th>
+                        <input type="checkbox" id="Check" onclick="CheckAll('chek', this)"> Check all
+                    </th>
+
+                    <th>
+                        image
+                    </th>
+
+                    <th>
+                        Item
+                    </th>
+
+                </tr>
+                </thead>
+
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="usersId" value="@item.Id" class="chek">
+                        </td>
+
+                        <td>
+                            image
+                        </td>
+                        <td>
+                            <form method="post" asp-action="ItemProfile">
+                                <p>
+                                    <input name="id" value="@item.Id" style="visibility: hidden"/>
+                                    <input type="submit" name="button" value="@item.Name" class="btn btn-link text-dark" formaction="~/Collection/ItemProfile">
+                                </p>
+                            </form>
+                            <p>@item.Tag</p>
+                            <p>@item.Description</p>
+                            @if (item.CustomFields != null)
+                            {
+                                @foreach (var custom in item.CustomFields)
+                                {
+                                    <p>@custom.Name : @custom.Data</p>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                }
+            </table>
+        </form>
+
+    }
+</div>
+
+<script>
+    function CheckAll(className, elem) {
+        var elements = document.getElementsByClassName(className);
+        var l = elements.length;
+        if (elem.checked) {
+            for (var i = 0; i < l; i++) {
+                elements[i].checked = true;
+            }
+        } else {
+            for (var i = 0; i < l; i++) {
+                elements[i].checked = false;
+            }
+        }
+    }
+</script>

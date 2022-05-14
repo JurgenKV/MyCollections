@@ -20,10 +20,7 @@ namespace MyCollections.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<UserCollection>()
-            //    .HasOne(p => p.UserId)
-            //    .WithMany(t=> t)
-            //    .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<ItemComment>()
                 .Property(f => f.Id)
                 .ValueGeneratedOnAdd();

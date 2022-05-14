@@ -11,12 +11,12 @@
 <div class="fs-3">
     <ui>
         @* Картинка *@
-        <li>@Model.item.Name</li>
-        <li>@Model.item.Tag</li>
-        <li>@Model.item.Description</li>
-        @if (Model.item.ItemLikes != null)
+        <li>@Model.Item.Name</li>
+        <li>@Model.Item.Tag</li>
+        <li>@Model.Item.Description</li>
+        @if (Model.Item.ItemLikes != null)
         {
-            <li>Лайки: @Model.item.ItemLikes.Count</li>
+            <li>Лайки: @Model.Item.ItemLikes.Count</li>
         }
     </ui>
 </div>
@@ -34,7 +34,7 @@
         </div>
 
         <button type="submit" class="btn btn-primary" name="userName" value="@User.Identity.Name" formaction="~/Collection/SetItemComment" onSubmit="window.location.reload()">Отправить</button>
-        <input name="idItem" value="@Model.item.Id" style="visibility: hidden"/>
+        <input name="idItem" value="@Model.Item.Id" style="visibility: hidden"/>
     </form>
 }
 
@@ -49,15 +49,18 @@
     <ol class="list-group list-group-numbered">
         @if (Model.ItemComments != null)
         {
-            <p style="visibility: hidden"> @Model.ItemComments.OrderByDescending(i => i.Id);</p>
+            <p style="visibility: hidden"> @Model.ItemComments.OrderByDescending(i => i.Date);</p>
             @foreach (var i in Model.ItemComments)
             {
+
                 <li class="list-group-item d-flex justify-content-between align-items-start">
                     <div class="ms-2 me-auto">
                         <div class="fw-bold">
+
                             <form method="post" asp-action="UserProfile" asp-controller="User">
                                 @if (User.Identity.IsAuthenticated)
                                 {
+                                    <input name="name" value="@i.UserName" style="visibility: hidden" />
                                     <input type="submit" name="button" value="@i.UserName" class="btn btn-link text-dark" formaction="~/User/UserProfile">
                                 }
                                 else
