@@ -220,12 +220,18 @@ namespace MyCollections.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     ItemId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ItemLikes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ItemLikes_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ItemLikes_Items_ItemId",
                         column: x => x.ItemId,
@@ -356,6 +362,11 @@ namespace MyCollections.Migrations
                 name: "IX_ItemLikes_ItemId",
                 table: "ItemLikes",
                 column: "ItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemLikes_UserId",
+                table: "ItemLikes",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserCollections_UserId",

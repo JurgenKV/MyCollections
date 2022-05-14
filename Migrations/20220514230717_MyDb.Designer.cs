@@ -10,7 +10,7 @@ using MyCollections.Models;
 namespace MyCollections.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220514144009_MyDb")]
+    [Migration("20220514230717_MyDb")]
     partial class MyDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -262,11 +262,13 @@ namespace MyCollections.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ItemId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("ItemLikes");
                 });
@@ -426,17 +428,13 @@ namespace MyCollections.Migrations
 
             modelBuilder.Entity("MyCollections.Models.CollectionItem", b =>
                 {
-                    b.HasOne("MyCollections.Models.Item", "Item")
+                    b.HasOne("MyCollections.Models.Item", null)
                         .WithMany("CollectionItems")
                         .HasForeignKey("ItemId");
 
-                    b.HasOne("MyCollections.Models.UserCollection", "UserCollection")
+                    b.HasOne("MyCollections.Models.UserCollection", null)
                         .WithMany("Items")
                         .HasForeignKey("UserCollectionId");
-
-                    b.Navigation("Item");
-
-                    b.Navigation("UserCollection");
                 });
 
             modelBuilder.Entity("MyCollections.Models.CustomField", b =>
@@ -462,6 +460,10 @@ namespace MyCollections.Migrations
                     b.HasOne("MyCollections.Models.Item", null)
                         .WithMany("ItemLikes")
                         .HasForeignKey("ItemId");
+
+                    b.HasOne("MyCollections.Models.User", null)
+                        .WithMany("UserItemLikes")
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("MyCollections.Models.UserCollection", b =>
@@ -485,6 +487,8 @@ namespace MyCollections.Migrations
             modelBuilder.Entity("MyCollections.Models.User", b =>
                 {
                     b.Navigation("UserCollections");
+
+                    b.Navigation("UserItemLikes");
                 });
 
             modelBuilder.Entity("MyCollections.Models.UserCollection", b =>

@@ -97,25 +97,25 @@
                     {
                         <tr>
                             <td>
-                                
+
                                 <form id="myForm" asp-controller="Collection" asp-action="SetItemLike" method="post">
                                     @if (Model.ItemLikes != null)
                                     {
-                                        <input name="UserId" value="@Model.User.Id" style="visibility: hidden" />
-                                        <input name="ItemId" value="@i.Id" style="visibility: hidden" />
-                                        <input type="submit" name="asd" id="asd" value="Like?" formaction="~/Collection/SetItemLike" />
+                                        <input name="UserId" value="@Model.User.Id" style="visibility: hidden"/>
+                                        <input name="ItemId" value="@i.Id" style="visibility: hidden"/>
+                                        <input type="submit" name="asd" id="asd" value="Like?" formaction="~/Collection/SetItemLike"/>
 
                                         @if (Model.ItemLikes.Any(j => (j.UserId == Model.User.Id) && (j.ItemId == i.Id)))
                                         {
                                             <label for="toggle-heart" aria-label="like">❤</label>
                                         }
-
                                     }
-                                    </form>
-                                <p> @if (i.ItemLikes != null)
-                                    {
-                                        i.ItemLikes.Count();
-                                    }</p>
+                                </form>
+
+                                @if (i.ItemLikes != null)
+                                {
+                                    <label aria-label="like">@i.ItemLikes.Count().ToString(); </label>
+                                }
                             </td>
                             <td>
                                 <img src="@Url.Content(i.Image)" style="width: 150px; height: 200px;" alt=""/>

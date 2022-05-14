@@ -13,5 +13,6 @@ namespace MyCollections.Models
         public bool AdminRoot { get; set; }
         public bool IsWhiteTheme { get; set; }
         public virtual ICollection<UserCollection> UserCollections { get; set; }
+        public virtual ICollection<ItemLike> UserItemLikes { get; set; }
     }
 }

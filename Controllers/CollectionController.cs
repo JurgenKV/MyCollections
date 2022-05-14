@@ -75,13 +75,14 @@ namespace MyCollections.Controllers
             ItemsCatalogViewModel itemsCatalogViewModel = new ItemsCatalogViewModel();
             itemsCatalogViewModel.TopFiveCollections = new List<UserCollection>();
             itemsCatalogViewModel.ItemLikes = new List<ItemLike>();
+            List<ItemLike> Likes = _db.ItemLikes.ToList();
             itemsCatalogViewModel.Items = !string.IsNullOrEmpty(str) ? _db.Items.Where(item => item.Tag == str || item.Name == str) : _db.Items;
             
             if (User.Identity.IsAuthenticated)
             {
                 itemsCatalogViewModel.User = _db.User.First(i => i.UserName == User.Identity.Name);
                 itemsCatalogViewModel.UserCollections = _db.UserCollections.Where(col => col.UserId == itemsCatalogViewModel.User.Id).ToList();
-                itemsCatalogViewModel.ItemLikes = _db.ItemLikes.Where(i => i.UserId == itemsCatalogViewModel.User.Id).ToList();
+                itemsCatalogViewModel.ItemLikes = Likes.Where(i => i.UserId == itemsCatalogViewModel.User.Id).ToList();
             }
 
             if (_db.UserCollections != null && _db.UserCollections.Count() > 5)
@@ -99,13 +100,14 @@ namespace MyCollections.Controllers
                     }
                 }
             }
-           
-            foreach (var item in itemsCatalogViewModel.Items)
+
+            if (Likes != null)
             {
-                 _db.Database.CloseConnection();
-                _db.Database.OpenConnection();
-                item.ItemLikes = new List<ItemLike>();
-                item.ItemLikes = _db.ItemLikes.Where(like => like.ItemId == item.Id).ToList();
+                foreach (var item in itemsCatalogViewModel.Items)
+                {
+                    item.ItemLikes = new List<ItemLike>();
+                    item.ItemLikes = Likes.Where(like => like.ItemId == item.Id).ToList();
+                }
             }
 
             return View(itemsCatalogViewModel);
@@ -143,14 +145,26 @@ namespace MyCollections.Controllers
                 UserId = UserId,
                 ItemId = ItemId
             };
-            
-            if(_db.ItemLikes.Any(i=> (i.UserId == UserId) && (i.ItemId == ItemId)))
+
+            ItemLike item = null;
+            try
             {
-                _db.ItemLikes.Remove(itemLike);
+                item = _db.ItemLikes.First(i => (i.UserId == UserId) && (i.ItemId == ItemId));
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Data);
+            }
+
+            if (item != null)
+            {
+                _db.ItemLikes.Remove(item);
+                _db.SaveChanges();
             }
             else
             {
                 _db.ItemLikes.Add(itemLike);
+                _db.SaveChanges();
             }
             
 
