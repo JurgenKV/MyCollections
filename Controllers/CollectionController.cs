@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualBasic;
 using MyCollections.Models;
 using MyCollections.ViewModels;
 
@@ -33,24 +34,59 @@ namespace MyCollections.Controllers
             _signInManager = signInManager;
         }
 
+        public async Task<IActionResult> CreateItem(string ItemTag, string ItemName, string ItemDescription, IFormFile image)
+        {
+            string path = null;
+
+            if (image != null)
+            {
+                path = "wwwroot/ImageStorage/ItemImage/" + Path.GetFileName(image.FileName);
+                DirectoryInfo dirInfo = new DirectoryInfo("wwwroot/ImageStorage/ItemImage/");
+
+                if (!dirInfo.Exists)
+                {
+                    dirInfo.Create();
+                    await using var fileStream = new FileStream(path, FileMode.Create);
+                    await image.CopyToAsync(fileStream);
+                }
+                else
+                {
+                    await using var fileStream = new FileStream(path, FileMode.Create);
+                    await image.CopyToAsync(fileStream);
+                }
+            }
+
+            Item item = new Item
+            {
+                Name = ItemName,
+                Tag = ItemTag,
+                Description = ItemDescription,
+                Image = Strings.Replace(path, "wwwroot/", "~/")
+            };
+
+            _db.Items.Add(item);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("AdminMenu", "User");
+        }
+
         public IActionResult ItemsCatalog(string str)
         {
             ItemsCatalogViewModel itemsCatalogViewModel = new ItemsCatalogViewModel();
             itemsCatalogViewModel.TopFiveCollections = new List<UserCollection>();
+            itemsCatalogViewModel.ItemLikes = new List<ItemLike>();
             itemsCatalogViewModel.Items = !string.IsNullOrEmpty(str) ? _db.Items.Where(item => item.Tag == str || item.Name == str) : _db.Items;
-
+            
             if (User.Identity.IsAuthenticated)
             {
-                User user = _db.User.First(i => i.UserName == User.Identity.Name);
-                itemsCatalogViewModel.UserCollections = _db.UserCollections.Where(col => col.UserId == user.Id).ToList();
+                itemsCatalogViewModel.User = _db.User.First(i => i.UserName == User.Identity.Name);
+                itemsCatalogViewModel.UserCollections = _db.UserCollections.Where(col => col.UserId == itemsCatalogViewModel.User.Id).ToList();
+                itemsCatalogViewModel.ItemLikes = _db.ItemLikes.Where(i => i.UserId == itemsCatalogViewModel.User.Id).ToList();
             }
 
-            itemsCatalogViewModel.ItemLikes = new ItemLike();
             if (_db.UserCollections != null && _db.UserCollections.Count() > 5)
             {
-                //IQueryable<UserCollection> userCollections = _db.UserCollections;
-                List<UserCollection> orderByDescending = _db.UserCollections.OrderBy(i => i.Items.Count()).ToList();
-
+                List<UserCollection> orderByDescending = _db.UserCollections.OrderByDescending(i => i.Items.Count()).ToList();
                 for (int i = 0; i < 5; i++)
                 {
                     try
@@ -62,6 +98,14 @@ namespace MyCollections.Controllers
                         Console.WriteLine(ex.Data);
                     }
                 }
+            }
+           
+            foreach (var item in itemsCatalogViewModel.Items)
+            {
+                 _db.Database.CloseConnection();
+                _db.Database.OpenConnection();
+                item.ItemLikes = new List<ItemLike>();
+                item.ItemLikes = _db.ItemLikes.Where(like => like.ItemId == item.Id).ToList();
             }
 
             return View(itemsCatalogViewModel);
@@ -92,18 +136,24 @@ namespace MyCollections.Controllers
             return View(itemProfileViewModel);
         }
 
-        public IActionResult SetItemLike(string user)
+        public IActionResult SetItemLike(string UserId, string ItemId)
         {
-            var users = _userManager.Users.ToList();
-            string currIdUser = "";
-
-            foreach (var u in users)
+            ItemLike itemLike = new ItemLike
             {
-                if (user == u.UserName)
-                {
-                    currIdUser = u.Id;
-                }
+                UserId = UserId,
+                ItemId = ItemId
+            };
+            
+            if(_db.ItemLikes.Any(i=> (i.UserId == UserId) && (i.ItemId == ItemId)))
+            {
+                _db.ItemLikes.Remove(itemLike);
             }
+            else
+            {
+                _db.ItemLikes.Add(itemLike);
+            }
+            
+
 
             return RedirectToAction("ItemsCatalog", "Collection");
         }
@@ -116,8 +166,9 @@ namespace MyCollections.Controllers
 
             if (image != null)
             {
-                path = "wwwroot/ImageStorage/CollectionImage/" + idUser + "/" + image.FileName;
+                path = "wwwroot/ImageStorage/CollectionImage/" + idUser + "/" + Path.GetFileName(image.FileName);
                 DirectoryInfo dirInfo = new DirectoryInfo("wwwroot/ImageStorage/CollectionImage/" + idUser);
+
                 if (!dirInfo.Exists)
                 {
                     dirInfo.Create();
@@ -137,7 +188,7 @@ namespace MyCollections.Controllers
                 UserId = idUser,
                 Description = description,
                 Tag = tag,
-                Image = path
+                Image = Strings.Replace(path,"wwwroot/","~/")
             };
 
 
@@ -155,7 +206,7 @@ namespace MyCollections.Controllers
         {
             User user = _db.User.First(i => i.Id == idUser);
             UserCollection userCollection = _db.UserCollections.First(i => i.Id == id);
-            string path = "wwwroot/ImageStorage/CollectionImage/" + user.Id + "/" + image.FileName;
+            string path = "~/ImageStorage/CollectionImage/" + user.Id + "/" + image.FileName;
 
             if (!string.IsNullOrEmpty(name))
                 userCollection.Name = name;
@@ -196,30 +247,16 @@ namespace MyCollections.Controllers
                 Console.WriteLine(ex);
             }
 
+            List<CollectionItem> collection = _db.CollectionItems.Where(i => i.UserCollectionId == userCollection.Id).ToList();
+            for (int i = 0; i < collection.Count(); i++)
+            {
+                _db.CollectionItems.Remove(collection[i]);
+            }
+            
+
             _db.UserCollections.Remove(userCollection);
             _db.SaveChanges();
             return RedirectToAction("UserProfile", "User", new { userName });
-        }
-
-        public ActionResult GetCollectionImage(string imagePath)
-        {
-            try
-            {
-                if (!string.IsNullOrEmpty(imagePath))
-                {
-                    return File(imagePath, "image/png");
-                }
-                else
-                {
-                    return File("wwwroot/ImageStorage/default.png", "image/png");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Data);
-            }
-
-            return null;
         }
 
         public IActionResult SetItemComment(string userName, string idItem, string comment)
@@ -260,7 +297,7 @@ namespace MyCollections.Controllers
             List<CollectionItem> collectionItemList = _db.CollectionItems.Where(i => i.UserCollectionId == IdCollection).ToList();
 
             foreach (var item in collectionItemList)
-            {
+            { 
                 collectionItemsViewModel.Items.Add(_db.Items.First(i => i.Id == item.ItemId));
             }
 

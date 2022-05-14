@@ -9,9 +9,10 @@ namespace MyCollections.ViewModels
     public class ItemsCatalogViewModel
     {
         public IQueryable<Item> Items;
-        public ItemLike ItemLikes;
+        public List<ItemLike> ItemLikes;
         public List<UserCollection> TopFiveCollections;
         public List<UserCollection> UserCollections;
+        public User User;
 
     }
 }

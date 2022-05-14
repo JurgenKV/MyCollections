@@ -9,6 +9,8 @@
 }
 @*<link href="~/css/ItemsPage.css" rel="stylesheet"/>*@
 <link href="~/css/site.css" rel="stylesheet"/>
+<link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet"/>
+
 <h2>Catalog</h2>
 
 <form method="post" asp-action="ItemsCatalog">
@@ -61,104 +63,118 @@
                     </p>
                 </form>*@
                 <h4 class="mb-3">Items</h4>
-                <form asp-controller="Collection">
-                    <table class="table table-borderless table-bordered">
-                        <thead class="text-dark">
+
+                <table class="table table-borderless table-bordered">
+                    <thead class="text-dark">
+                    <tr>
+                        <th>
+
+                        </th>
+
+                        <th>
+                            Image
+                        </th>
+
+                        <th>
+                            Tag
+                        </th>
+                        <th>
+                            Name
+                        </th>
+                        <th>
+                            Description
+                        </th>
+                        <td>
+                            Likes
+                        </td>
+                        <td>
+
+                        </td>
+                    </tr>
+                    </thead>
+
+                    @foreach (var i in Model.Items)
+                    {
                         <tr>
-                            <th>
-                                <input type="checkbox" id="Check" onclick="CheckAll('chek', this)"> Check all
-                            </th>
-
-                            <th>
-                                Image
-                            </th>
-
-                            <th>
-                                Tag
-                            </th>
-                            <th>
-                                Name
-                            </th>
-                            <th>
-                                Description
-                            </th>
                             <td>
-                                Likes
+                                
+                                <form id="myForm" asp-controller="Collection" asp-action="SetItemLike" method="post">
+                                    @if (Model.ItemLikes != null)
+                                    {
+                                        <input name="UserId" value="@Model.User.Id" style="visibility: hidden" />
+                                        <input name="ItemId" value="@i.Id" style="visibility: hidden" />
+                                        <input type="submit" name="asd" id="asd" value="Like?" formaction="~/Collection/SetItemLike" />
+
+                                        @if (Model.ItemLikes.Any(j => (j.UserId == Model.User.Id) && (j.ItemId == i.Id)))
+                                        {
+                                            <label for="toggle-heart" aria-label="like">❤</label>
+                                        }
+
+                                    }
+                                    </form>
+                                <p> @if (i.ItemLikes != null)
+                                    {
+                                        i.ItemLikes.Count();
+                                    }</p>
                             </td>
                             <td>
+                                <img src="@Url.Content(i.Image)" style="width: 150px; height: 200px;" alt=""/>
+                            </td>
+                            <td>
+                                @Html.DisplayFor(item => i.Tag)
 
+                            </td>
+                            <td>
+                                <form method="post" asp-action="ItemProfile">
+                                    <p>
+                                        <input name="id" , value="@i.Id" style="visibility: hidden"/>
+                                        <input type="submit" name="button" value="@i.Name" class="btn btn-link text-dark" formaction="~/Collection/ItemProfile">
+                                    </p>
+                                </form>
+                            </td>
+                            <td>
+                                @Html.DisplayFor(item => i.Description)
+                            </td>
+                            <td>
+                                @if (i.ItemLikes != null)
+                                {
+                                    <p>Likes: </p>
+                                }
+                                else
+                                {
+                                    <p>Likes: 0 </p>
+                                }
+                            </td>
+                            <td>
+                                @if (User.Identity.IsAuthenticated && (Model.UserCollections != null))
+                                {
+                                    <form method="post" asp-action="AddCollectionItem">
+
+                                        <div class="dropdown">
+                                            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                                В коллекцию
+                                            </a>
+
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+
+                                                @foreach (var collection in Model.UserCollections)
+                                                {
+                                                    <input name="IdCollection" , value="@collection.Id" style="visibility: hidden"/>
+                                                    <input name="IdItem" value="@i.Id" style="visibility: hidden"/>
+                                                    <li>
+                                                        <input type="submit" name="CollectionName" value="@collection.Name" class="btn btn-link text-dark" formaction="~/Collection/AddCollectionItem">
+                                                    </li>
+                                                }
+
+                                            </ul>
+                                        </div>
+                                    </form>
+                                }
                             </td>
                         </tr>
-                        </thead>
+                    }
+                </table>
 
-                        @foreach (var i in Model.Items)
-                        {
-                            <tr>
-                                <td>
-                                    @*<input type="checkbox" name="usersId" value="@i.Id" class="chek" onclick="sendForm(@i.Id)">*@
-                                    <form id="myForm" asp-controller="Collection" asp-action="SetItemLike" method="post">
-                                        <input type="checkbox" name="UserId" id="@i.Id" onclick="sendForm(@i.Id)"/>
-                                        <label for="toggle-heart" aria-label="like">❤</label>
-                                    </form>
-                                </td>
-                                <td>
-                                    @*<img src="@Url.Action("", "Collection" , new { imagePath=@i.Image })" style="width: 150px; height: 200px;" alt="" />*@
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(item => i.Tag)
-
-                                </td>
-                                <td>
-                                    <form method="post" asp-action="ItemProfile">
-                                        <p>
-                                            <input name="id" , value="@i.Id" style="visibility: hidden"/>
-                                            <input type="submit" name="button" value="@i.Name" class="btn btn-link text-dark" formaction="~/Collection/ItemProfile">
-                                        </p>
-                                    </form>
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(item => i.Description)
-                                </td>
-                                <td>
-                                    @if (i.ItemLikes != null)
-                                    {
-                                        <p>Likes: @i.ItemLikes.Count() </p>
-                                    }
-                                    else
-                                    {
-                                        <p>Likes: 0 </p>
-                                    }
-                                </td>
-                                <td>
-                                    @if (User.Identity.IsAuthenticated && (Model.UserCollections != null))
-                                    {
-                                        <form method="post" asp-action="AddCollectionItem">
-
-                                            <div class="dropdown">
-                                                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    В коллекцию
-                                                </a>
-
-                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-
-                                                    @foreach (var collection in Model.UserCollections)
-                                                    {
-                                                        <input name="IdCollection" , value="@collection.Id" style="visibility: hidden"/>
-                                                        <input name="IdItem" value="@i.Id" style="visibility: hidden"/>
-                                                        <li>
-                                                            <input type="submit" name="CollectionName" value="@collection.Name" class="btn btn-link text-dark" formaction="~/Collection/AddCollectionItem">
-                                                        </li>
-                                                    }
-
-                                                </ul>
-                                            </div>
-                                        </form>
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </table>
-                </form>
             </div>
         </div>
     </main>

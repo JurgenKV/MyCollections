@@ -17,29 +17,32 @@
     <input class="btn btn-outline-success" type="submit" name="submit" value="Unblock" formmethod="post" formaction="~/User/MultiplyUnblock" style="border-color: white" />
     <input class="btn btn-outline-dark" type="submit" name="submit" value="Set User Role" formmethod="post" formaction="~/User/MultiplySetUserRoot" style="border-color: white" />
     <input class="btn btn-outline-primary" type="submit" name="submit" value="Set Admin Role" formmethod="post" formaction="~/User/MultiplySetAdminRoot" style="border-color: white" />
+    <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#staticBackdropCreate">
+        Add Item
+    </button>
     <table class="table table-borderless table-bordered">
         <thead class="text-dark">
-            <tr>
-                <th>
-                    <input type="checkbox" id="Check" onclick="CheckAll('chek', this)"> Check all
-                </th>
+        <tr>
+            <th>
+                <input type="checkbox" id="check_all" onclick="CheckAll('chek', this)"> Check all
+            </th>
 
-                <th>
-                    UserName
-                </th>
+            <th>
+                UserName
+            </th>
 
-                <th>
-                    Email
-                </th>
-                <th>
-                    Status
-                </th>
-                <th>
-                    Role
-                </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+                Role
+            </th>
 
 
-            </tr>
+        </tr>
         </thead>
 
         @foreach (var i in Model)
@@ -49,11 +52,10 @@
                     <input type="checkbox" name="usersId" value="@i.Id" class="chek">
                 </td>
                 <td>
-                    <form method="post" asp-action="UserProfile">
-                        <input name="name" value="@i.UserName" style="visibility: hidden" />
-                        <input type="submit" name="button" value="@i.UserName" class="btn btn-link text-dark" formaction="~/User/UserProfile">
+                    <input name="name" value="@i.UserName" style="visibility: hidden" />
+                    <input type="submit" name="button" value="@i.UserName" class="btn btn-link text-dark" formaction="~/User/UserProfile">
 
-                    </form>
+                    @Html.ActionLink(@i.UserName,"UserProfile", "User", @i.UserName)
                 </td>
                 <td>
                     @Html.DisplayFor(mitem => i.Email)
@@ -85,6 +87,44 @@
         }
     </table>
 </form>
+
+<div class="modal fade" id="staticBackdropCreate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Загрузить новый Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" asp-controller="Collection" asp-action="UpdateCollection" enctype="multipart/form-data" onSubmit="window.location.reload()">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="rendered-form" class="form-label">Загрузить изображение</label>
+                        <input type="file" class="form-control" id="img" name="image">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="rendered-form" class="form-label">Item Name</label>
+                        <input type="text" class="form-control" id="IDname" name="ItemTag" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rendered-form" class="form-label">Tag</label>
+                        <input type="text" class="form-control" id="IDtag" name="ItemName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rendered-form" class="form-label">Description</label>
+                        <input type="text" class="form-control" id="IDdes" name="ItemDescription">
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+
+                </div>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <input class="btn btn-primary" type="submit" value="Create" formaction="~/Collection/CreateItem">
+            </form>
+        </div>
+    </div>
+</div>
 
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>

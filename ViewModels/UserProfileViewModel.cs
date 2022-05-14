@@ -9,7 +9,7 @@ namespace MyCollections.ViewModels
     public class UserProfileViewModel
     {
         public User User;
-        public IQueryable<UserCollection> UserCollections;
+        public List<UserCollection> UserCollections;
         public CustomField CustomField;
     }
 }

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MyCollections.ViewModels;
@@ -307,7 +308,7 @@ namespace MyCollections.Controllers
                 user = _db.User.First(i => i.UserName == User.Identity.Name);
             }
             
-            userProfile.UserCollections =  _db.UserCollections.Where(coll => coll.UserId.Equals(user.Id));
+            userProfile.UserCollections =  _db.UserCollections.Where(coll => coll.UserId.Equals(user.Id)).ToList();
 
             userProfile.User = user;
             userProfile.CustomField = new CustomField();
@@ -315,11 +316,5 @@ namespace MyCollections.Controllers
             return View(userProfile);
         }
 
-        //public void DeleteUserData(User user)
-        //{
-            
-
-
-        //}
     }
 }

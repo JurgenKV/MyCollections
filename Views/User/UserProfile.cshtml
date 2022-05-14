@@ -26,7 +26,7 @@
 
 <text> Collection Tools: </text>
 
-<form asp-controller="Collection" method="post">
+<form method="post">
     <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#staticBackdropCreate">
         Create
     </button>
@@ -71,14 +71,15 @@
                     </td>
 
                     <td>
-                        <img src="@Url.Action("GetCollectionImage", "Collection", new { imagePath = @i.Image })" style="width: 150px; height: 200px;" alt=""/>
+                        <img src="@Url.Content(i.Image)" style="width: 150px; height: 200px;" alt=""/>
                     </td>
                     <td>
-                       
+                        <form method="post">
                             <input type="submit" name="button" value="@i.Name" class="btn btn-link text-dark" formaction="~/Collection/CollectionItems">
-                            <input name="IdUser" value="@Model.User.Id" style="visibility: hidden"/>
-                            <input name="IdCollection" value="@i.Id" style="visibility: hidden"/>
-                        
+                            <input name="IdUser" value="@Model.User.Id" style="visibility: hidden" />
+                            <input name="IdCollection" value="@i.Id" style="visibility: hidden" />
+                        </form>
+                            
                     </td>
                     <td>
                         @Html.DisplayFor(mitem => i.Tag)
