@@ -1,9 +1,9 @@
-﻿@model MyCollections.ViewModels.CollectionItemsViewModel;
+﻿@using Microsoft.IdentityModel.Tokens
+@using System.Security.Cryptography.X509Certificates
+@model MyCollections.ViewModels.CollectionItemsViewModel;
 
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
 @{
+
 }
 
 
@@ -44,22 +44,36 @@
                         @if (User.Identity.Name == Model.User.UserName)
                         {
                             <form method="post">
-
-                                <div class="dropdown">
-                                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Действие
-                                    </a>
-
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                        <li>
-                                            <input class="btn btn-outline-danger" type="submit" name="Id" value="Delete" formmethod="post" formaction="~/Collection/DeleteCollectionItem" style="border-color: white" onSubmit="window.location.reload()"/>
-                                            <input name="IdCollection" value="@Model.UserCollection.Id" style="visibility: hidden" size="1"/>
-                                            <input name="IdItem" value="@item.Id" style="visibility: hidden" size="1"/>
-                                            <input name="IdUser" value="@Model.User.Id" style="visibility: hidden" size="1"/>
-                                        </li>
-                                    </ul>
-                                </div>
+                                <input class="btn btn-outline-danger" type="submit" name="Id" value="Delete" formmethod="post" formaction="~/Collection/DeleteCollectionItem" style="border-color: white" onSubmit="window.location.reload()"/>
+                                <input name="IdCollection" value="@Model.UserCollection.Id" style="visibility: hidden" size="1"/>
+                                <input name="IdItem" value="@item.Id" style="visibility: hidden" size="1"/>
+                                <input name="IdUser" value="@Model.User.Id" style="visibility: hidden" size="1"/>
                             </form>
+                            <div class="dropdown">
+                                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false" data-info="4">
+                                    Update
+                                </a>
+
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                    <form method="post" asp-controller="Collection" asp-action="UpdateDataField" enctype="multipart/form-data" onSubmit="window.location.reload()">
+                                        <input name="IdUser" value="@Model.User.Id" style="visibility: hidden" size="1" />
+                                        <input name="IdCollection" value="@Model.UserCollection.Id" size="1" style="visibility: hidden" />
+                                        <select name="FieldId">
+                                            @foreach (var Field in @Model.ExtendedFields)
+                                            {
+                                                <option name="FieldId" value="@Field.Id">
+                                                    @Field.Name
+                                                </option>
+                                            }
+                                        </select>
+                                        <input name="IdUser" value="@Model.User.Id" style="visibility: hidden" size="1" />
+                                        <input name="IdItem" value="@item.Id" style="visibility: hidden" size="1" />
+                                        <input name="Data" value="" />
+                                        <input class="btn btn-primary" type="submit" value="Update" formaction="~/Collection/UpdateDataField">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </form>
+                                </div>
+                            </div>
                         }
                     </td>
 
@@ -84,12 +98,25 @@
                             @foreach (var field in @Model.ExtendedFields)
                             {
                                 <li>
-                                    @field.Name;
+                                    <a>
+                                        @field.Name :
+                                        @if (Model.DataFields != null)
+                                        {
+                                            if (@Model.DataFields.Any(i => i.ItemId == item.Id && i.ExtendedFieldId == field.Id))
+                                            {
+                                                {
+                                                    DataField data = @Model.DataFields.First(i => i.ItemId == item.Id && i.ExtendedFieldId == field.Id);
+                                                    <label>@data.Data</label>
+                                                }
+
+                                            }
+
+                                        }
+                                    </a>
                                 </li>
                             }
 
                         </ul>
-
 
                     </td>
                 </tr>
@@ -97,3 +124,72 @@
         </table>
     }
 </div>
+
+<div class="modal fade" id="staticBackdropCreate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" asp-controller="Collection" asp-action="UpdateDataField" enctype="multipart/form-data" onSubmit="window.location.reload()">
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label for="rendered-form" class="form-label"></label>
+                        <input type="hidden" class="form-control" id="img" name="image" value="">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="rendered-form" class="form-label"> </label>
+                        <input type="text" class="form-control" id="IDname" name="name" value="@selectItem.Name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rendered-form" class="form-label">Tag</label>
+                        <input type="text" class="form-control" id="IDtag" name="tag" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rendered-form" class="form-label">Description</label>
+                        <input type="text" class="form-control" id="IdCollection" name="@selectItem.Id">
+                    </div>
+                    <div>
+                        <div id="input0"></div>
+                        <div class="add" onclick="addInput()">Add Custom Field</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+
+                </div>
+                <input name="IdUser" value="@Model.User.Id" style="visibility: hidden"/>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <input class="btn btn-primary" type="submit" value="Update" formaction="~/Collection/UpdateDataField">
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@functions{
+
+    public Item selectItem = new Item();
+
+    void UpdateHeading(Item curItem)
+    {
+        selectItem = curItem;
+    }
+
+}
+
+@section Scripts
+{
+    <script>
+
+
+        function RazorFunction(item) {
+            var it = item;
+            @*/ $("button").html('@UpdateHeading(item)')*@
+            console.log(@selectItem);
+        }
+
+    </script>
+}

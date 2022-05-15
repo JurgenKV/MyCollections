@@ -14,7 +14,7 @@ namespace MyCollections.Models
         public int Id { get; set; }
         public string ItemId { get; set; }
         public string Data { get; set; }
-        public int CustomFieldId { get; set; }
+        public int ExtendedFieldId { get; set; }
 
     }
 }

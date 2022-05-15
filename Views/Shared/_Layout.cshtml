@@ -18,50 +18,51 @@
             <a class="d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none fs-3" asp-area="" asp-controller="Collection" asp-action="ItemsCatalog">Catalog</a>
             <p> </p>
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                @*<li>
-                    <a class="nav-link px-2 link-dark" asp-area="" asp-controller="User" asp-action="Index">Home</a>
-                </li>*@
+
                 <li>
-                    @if(User.Identity.IsAuthenticated){
-                    <a class="nav-link px-2 link-dark" asp-area="" asp-controller="User" asp-action="AdminMenu">AdminMenu</a>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <a class="nav-link px-2 link-dark" asp-area="" asp-controller="User" asp-action="AdminMenu">AdminMenu</a>
                     }
                 </li>
 
             </ul>
 
-            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
-                <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
-            </form>
             @if (User.Identity.IsAuthenticated)
             {
-        <form method="post" asp-controller="User" asp-action="UserProfile">
-            <div class="dropdown text-end">
-                <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                    <p>@User.Identity.Name</p>
-                </a>
-
-                <input name="name" , value="@User.Identity.Name" style="visibility: hidden" />
-                <ul class="dropdown-menu text-start position-absolute top-100 start-100 translate-middle" aria-labelledby="dropdownUser1">
-                    <li>
-                        <input type="submit" name="button" value="Profile" class="btn btn-link text-dark" formaction="~/User/UserProfile">
-                    </li>
-                    <li>
-                        <input type="submit" value="Sign out" class="btn btn-link text-dark" asp-controller="User" asp-action="Logout" />
-                    </li>
-                </ul>
-
-            </div>
+        <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" method="post" asp-action="ItemsCatalog">
+            <input type="search" name="str" placeholder="Поиск по каталогу">
+            <input type="submit" value="Найти" formaction="~/Collection/ItemsCatalog">
         </form>
-        }
-        else
-        {
-            <div class="col-md-3 text-end">
-                <form>
-                    <input type="submit" value="Login" class="btn btn-outline-primary me-2" asp-controller="User" asp-action="Login" />
-                    <input type="submit" value="Sign-up" class="btn btn-primary" asp-controller="User" asp-action="Registration" />
+
+                <form method="post" asp-controller="User" asp-action="UserProfile">
+                    <div class="dropdown text-end">
+                        <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                            <p>@User.Identity.Name</p>
+                        </a>
+
+                        <input name="name" , value="@User.Identity.Name" style="visibility: hidden" />
+                        <ul class="dropdown-menu text-start position-absolute top-100 start-100 translate-middle" aria-labelledby="dropdownUser1">
+                            <li>
+                                <input type="submit" name="button" value="Profile" class="btn btn-link text-dark" formaction="~/User/UserProfile">
+                            </li>
+                            <li>
+                                <input type="submit" value="Sign out" class="btn btn-link text-dark" asp-controller="User" asp-action="Logout" />
+                            </li>
+                        </ul>
+
+                    </div>
                 </form>
-            </div>
-        }
+            }
+            else
+            {
+                <div class="col-md-3 text-end">
+                    <form>
+                        <input type="submit" value="Login" class="btn btn-outline-primary me-2" asp-controller="User" asp-action="Login" />
+                        <input type="submit" value="Sign-up" class="btn btn-primary" asp-controller="User" asp-action="Registration" />
+                    </form>
+                </div>
+            }
         </div>
     </div>
 </header>

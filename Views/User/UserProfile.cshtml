@@ -36,6 +36,28 @@
     @*<input class="" type="submit" name="submit" value="Update" formmethod="post" formaction="~/Collection/UpdateCollection" style="border-color: white" />*@
     <input class="btn btn-outline-danger" type="submit" name="submit" value="Delete" formmethod="post" formaction="~/Collection/DeleteCollection" style="border-color: white"/>
     <input name="userName" value="@Model.User.UserName" style="visibility: hidden"/>
+
+        <div class="dropdown">
+            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false" data-info="4">
+                csv
+            </a>
+
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <form method="post" asp-controller="Collection" asp-action="UpdateDataField" enctype="multipart/form-data" onSubmit="window.location.reload()">
+                    <input name="name" value="@Model.User.UserName" style="visibility: hidden" size="1" />
+                    <select name="CollectionId">
+                        @foreach (var collection in @Model.UserCollections)
+                        {
+                            <option name="FieldId" value="@collection.Id">
+                                @collection.Name
+                            </option>
+                        }
+                    </select>
+                    <input class="btn btn-primary" type="submit" value="Update" formaction="~/Collection/ExportCSV">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
     @if (Model.UserCollections != null)
     {
         <table class="table table-borderless table-bordered">

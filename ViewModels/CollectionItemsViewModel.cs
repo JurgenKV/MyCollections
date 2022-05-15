@@ -13,5 +13,6 @@ namespace MyCollections.ViewModels
         public List<Item> Items;
         public List<ExtendedField> ExtendedFields;
         public List<DataField> DataFields;
+        public Item TempItem;
     }
 }
