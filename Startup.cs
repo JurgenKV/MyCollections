@@ -33,6 +33,7 @@ namespace MyCollections
             services.AddDbContext<ApplicationContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             
+
             services.AddIdentity<User, IdentityRole>(options =>
                     {
                         options.Password.RequiredLength = 1;   // ìèíèìàëüíàÿ äëèíà
@@ -65,6 +66,7 @@ namespace MyCollections
             {
                 // enables immediate logout, after updating the user's stat.
                 options.ValidationInterval = TimeSpan.Zero;
+                
             });
             services.AddControllersWithViews();
 

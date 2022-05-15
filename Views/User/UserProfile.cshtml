@@ -123,7 +123,10 @@
                         <label for="rendered-form" class="form-label">Description</label>
                         <input type="text" class="form-control" id="IDdes" name="description">
                     </div>
-
+                    <div>
+                        <div id="input0"></div>
+                        <div class="add" onclick="addInput()">Add Custom Field</div>
+                    </div>
                 </div>
                 <div class="modal-footer">
 
@@ -162,6 +165,7 @@
                         <label for="rendered-form" class="form-label">Description</label>
                         <input type="text" class="form-control" id="IDdes" name="description">
                     </div>
+                   
 
                 </div>
                 <div class="modal-footer">
@@ -187,6 +191,16 @@
             for (var i = 0; i < elements.length; i++) {
                 elements[i].checked = false;
             }
+        }
+    }
+
+    var x = 0;
+
+    function addInput() {
+        if (x < 10) {
+            var str = '<input type="text" class="amount" name="Fields" placeholder="Name"> <div id="input' + (x + 1) + '"></div>';
+            document.getElementById('input' + x).innerHTML = str;
+            x++;
         }
     }
 </script>

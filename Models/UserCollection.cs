@@ -18,7 +18,7 @@ namespace MyCollections.Models
         public string Tag { get; set; }
         public string Image { get; set; }
 
-        public ICollection<CustomField> CustomFields { get; set; }
+        public ICollection<ExtendedField> CustomFields { get; set; }
         public ICollection<CollectionItem> Items { get; set; }
     }
 }

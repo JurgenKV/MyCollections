@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 
 namespace MyCollections.Models
 {
-    public class CollectionItem
+    public class DataField
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string ItemId { get; set; }
-        public string UserCollectionId { get; set; }
+        public string Data { get; set; }
+        public int CustomFieldId { get; set; }
 
     }
 }

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MyCollections.Migrations
 {
-    public partial class MyDb : Migration
+    public partial class myDb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -267,29 +267,43 @@ namespace MyCollections.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CustomFields",
+                name: "ExtendedFields",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Data = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ItemId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     UserCollectionId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CustomFields", x => x.Id);
+                    table.PrimaryKey("PK_ExtendedFields", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CustomFields_Items_ItemId",
-                        column: x => x.ItemId,
-                        principalTable: "Items",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_CustomFields_UserCollections_UserCollectionId",
+                        name: "FK_ExtendedFields_UserCollections_UserCollectionId",
                         column: x => x.UserCollectionId,
                         principalTable: "UserCollections",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DataFields",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ItemId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Data = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CustomFieldId = table.Column<int>(type: "int", nullable: false),
+                    ExtendedFieldId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DataFields", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DataFields_ExtendedFields_ExtendedFieldId",
+                        column: x => x.ExtendedFieldId,
+                        principalTable: "ExtendedFields",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -344,13 +358,13 @@ namespace MyCollections.Migrations
                 column: "UserCollectionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CustomFields_ItemId",
-                table: "CustomFields",
-                column: "ItemId");
+                name: "IX_DataFields_ExtendedFieldId",
+                table: "DataFields",
+                column: "ExtendedFieldId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CustomFields_UserCollectionId",
-                table: "CustomFields",
+                name: "IX_ExtendedFields_UserCollectionId",
+                table: "ExtendedFields",
                 column: "UserCollectionId");
 
             migrationBuilder.CreateIndex(
@@ -395,7 +409,7 @@ namespace MyCollections.Migrations
                 name: "CollectionItems");
 
             migrationBuilder.DropTable(
-                name: "CustomFields");
+                name: "DataFields");
 
             migrationBuilder.DropTable(
                 name: "ItemComments");
@@ -407,10 +421,13 @@ namespace MyCollections.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "UserCollections");
+                name: "ExtendedFields");
 
             migrationBuilder.DropTable(
                 name: "Items");
+
+            migrationBuilder.DropTable(
+                name: "UserCollections");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

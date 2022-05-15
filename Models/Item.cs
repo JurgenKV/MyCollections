@@ -18,7 +18,6 @@ namespace MyCollections.Models
         public string Image { get; set; }
 
         public virtual ICollection<CollectionItem> CollectionItems{ get; set; }
-        public virtual ICollection<CustomField> CustomFields { get; set; }
         public virtual ICollection<ItemComment> ItemComments { get; set; }
         public virtual ICollection<ItemLike> ItemLikes { get; set; }
     }

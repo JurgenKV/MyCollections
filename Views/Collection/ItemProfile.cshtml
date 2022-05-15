@@ -10,13 +10,14 @@
 
 <div class="fs-3">
     <ui>
-        @* Картинка *@
+        <img src="@Url.Content(Model.Item.Image)" style="width: 150px; height: 200px;" alt=""/>
         <li>@Model.Item.Name</li>
         <li>@Model.Item.Tag</li>
         <li>@Model.Item.Description</li>
-        @if (Model.Item.ItemLikes != null)
+
+        @if (Model.ItemLikes != null)
         {
-            <li>Лайки: @Model.Item.ItemLikes.Count</li>
+            <li>Лайки: @Model.ItemLikes.Count()</li>
         }
     </ui>
 </div>
@@ -34,7 +35,7 @@
         </div>
 
         <button type="submit" class="btn btn-primary" name="userName" value="@User.Identity.Name" formaction="~/Collection/SetItemComment" onSubmit="window.location.reload()">Отправить</button>
-        <input name="idItem" value="@Model.Item.Id" style="visibility: hidden"/>
+        <input name="idItem" value="@Model.Item.Id" style="visibility: hidden" size="1"/>
     </form>
 }
 
@@ -58,9 +59,10 @@
                         <div class="fw-bold">
 
                             <form method="post" asp-action="UserProfile" asp-controller="User">
+
                                 @if (User.Identity.IsAuthenticated)
                                 {
-                                    <input name="name" value="@i.UserName" style="visibility: hidden" />
+                                    <input name="name" value="@i.UserName" style="visibility: hidden" size="1"/>
                                     <input type="submit" name="button" value="@i.UserName" class="btn btn-link text-dark" formaction="~/User/UserProfile">
                                 }
                                 else

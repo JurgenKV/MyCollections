@@ -8,86 +8,92 @@
 
 
 <div class="widget widget-comments open" id="comments">
-    <div class="block-title">[@if (Model.Items != null)
-                             {
-                                 @Model.Items.Count
-                                 
-                             }] Коллекция @Model.UserCollection.Name пользователя @Model.User.UserName
-        </div>
+    <div class="block-title">
+        [
+        @if (Model.Items != null)
+        {
+            @Model.Items.Count
+        }
+        ] Коллекция @Model.UserCollection.Name пользователя @Model.User.UserName
+    </div>
 
     @if (Model.Items != null)
     {
-        <form asp-controller="User">
-            <text> Admin Bar:  </text>
-            <input class="btn btn-outline-danger" type="submit" name="submit" value="Delete" formmethod="post" formaction="~/User/MultiplyDelete" style="border-color: white" />
-            <input class="btn btn-outline-warning" type="submit" name="submit" value="Block" formmethod="post" formaction="~/User/MultiplyBlock" style="border-color: white" />
-            <table class="table table-borderless table-bordered">
-                <thead class="text-dark">
+        <table class="table table-borderless table-bordered">
+            <thead class="text-dark">
+            <tr>
+                <th>
+
+                </th>
+
+                <th>
+                    image
+                </th>
+
+                <th>
+                    Item
+                </th>
+
+            </tr>
+            </thead>
+
+            @foreach (var item in Model.Items)
+            {
                 <tr>
-                    <th>
-                        <input type="checkbox" id="Check" onclick="CheckAll('chek', this)"> Check all
-                    </th>
+                    <td>
+                        @if (User.Identity.Name == Model.User.UserName)
+                        {
+                            <form method="post">
 
-                    <th>
-                        image
-                    </th>
+                                <div class="dropdown">
+                                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Действие
+                                    </a>
 
-                    <th>
-                        Item
-                    </th>
-
-                </tr>
-                </thead>
-
-                @foreach (var item in Model.Items)
-                {
-                    <tr>
-                        <td>
-                            <input type="checkbox" name="usersId" value="@item.Id" class="chek">
-                        </td>
-
-                        <td>
-                            image
-                        </td>
-                        <td>
-                            <form method="post" asp-action="ItemProfile">
-                                <p>
-                                    <input name="id" value="@item.Id" style="visibility: hidden"/>
-                                    <input type="submit" name="button" value="@item.Name" class="btn btn-link text-dark" formaction="~/Collection/ItemProfile">
-
-                                </p>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                        <li>
+                                            <input class="btn btn-outline-danger" type="submit" name="Id" value="Delete" formmethod="post" formaction="~/Collection/DeleteCollectionItem" style="border-color: white" onSubmit="window.location.reload()"/>
+                                            <input name="IdCollection" value="@Model.UserCollection.Id" style="visibility: hidden" size="1"/>
+                                            <input name="IdItem" value="@item.Id" style="visibility: hidden" size="1"/>
+                                            <input name="IdUser" value="@Model.User.Id" style="visibility: hidden" size="1"/>
+                                        </li>
+                                    </ul>
+                                </div>
                             </form>
-                            <p>@item.Tag</p>
-                            <p>@item.Description</p>
-                            @if (item.CustomFields != null)
+                        }
+                    </td>
+
+                    <td>
+                        <img src="@Url.Content(item.Image)" style="width: 150px; height: 200px;" alt=""/>
+                    </td>
+                    <td>
+                        <form method="post" asp-action="ItemProfile">
+                            <p>
+                                <input type="submit" name="button" value="@item.Name" class="btn btn-link text-dark" formaction="~/Collection/ItemProfile">
+                                <input name="id" value="@item.Id" style="visibility: hidden" size="1"/>
+                            </p>
+                        </form>
+
+                        <ul>
+                            <li>
+                                @item.Tag
+                            </li>
+                            <li>
+                                @item.Description
+                            </li>
+                            @foreach (var field in @Model.ExtendedFields)
                             {
-                                @foreach (var custom in item.CustomFields)
-                                {
-                                    <p>@custom.Name : @custom.Data</p>
-                                }
+                                <li>
+                                    @field.Name;
+                                </li>
                             }
-                        </td>
-                    </tr>
 
-                }
-            </table>
-        </form>
+                        </ul>
 
+
+                    </td>
+                </tr>
+            }
+        </table>
     }
 </div>
-
-<script>
-    function CheckAll(className, elem) {
-        var elements = document.getElementsByClassName(className);
-        var l = elements.length;
-        if (elem.checked) {
-            for (var i = 0; i < l; i++) {
-                elements[i].checked = true;
-            }
-        } else {
-            for (var i = 0; i < l; i++) {
-                elements[i].checked = false;
-            }
-        }
-    }
-</script>

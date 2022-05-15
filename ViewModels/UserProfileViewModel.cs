@@ -10,6 +10,7 @@ namespace MyCollections.ViewModels
     {
         public User User;
         public List<UserCollection> UserCollections;
-        public CustomField CustomField;
+        public ExtendedField ExtendedFields;
+
     }
 }

@@ -75,8 +75,9 @@ namespace MyCollections.Controllers
             ItemsCatalogViewModel itemsCatalogViewModel = new ItemsCatalogViewModel();
             itemsCatalogViewModel.TopFiveCollections = new List<UserCollection>();
             itemsCatalogViewModel.ItemLikes = new List<ItemLike>();
+            
             List<ItemLike> Likes = _db.ItemLikes.ToList();
-            itemsCatalogViewModel.Items = !string.IsNullOrEmpty(str) ? _db.Items.Where(item => item.Tag == str || item.Name == str) : _db.Items;
+            itemsCatalogViewModel.Items = !string.IsNullOrEmpty(str) ? _db.Items.Where(item => item.Tag.Contains(str)  || item.Name.Contains( str)) : _db.Items;
             
             if (User.Identity.IsAuthenticated)
             {
@@ -110,6 +111,13 @@ namespace MyCollections.Controllers
                 }
             }
 
+            List<string> Tags = new List<string>();
+            foreach (var item in _db.Items)
+            {
+                Tags.Add(item.Tag);
+            }
+
+            itemsCatalogViewModel.TagCloude = Tags.Distinct();
             return View(itemsCatalogViewModel);
         }
 
@@ -167,14 +175,12 @@ namespace MyCollections.Controllers
                 _db.SaveChanges();
             }
             
-
-
             return RedirectToAction("ItemsCatalog", "Collection");
         }
 
         [HttpPost]
         public async Task<IActionResult> AddCollection(string idUser, string name, string tag, string description,
-            IFormFile image)
+            IFormFile image, string[] Fields)
         {
             string path = null;
 
@@ -204,9 +210,19 @@ namespace MyCollections.Controllers
                 Tag = tag,
                 Image = Strings.Replace(path,"wwwroot/","~/")
             };
-
-
             _db.UserCollections.Add(userCollection);
+
+            foreach (var Field in Fields)
+            {
+                ExtendedField ExtendedField = new ExtendedField()
+                {
+                    Name = Field,
+                    UserCollectionId = userCollection.Id
+                };
+                _db.ExtendedFields.Add(ExtendedField); //Снять
+            }
+
+
             await _db.SaveChangesAsync();
             User user = _db.User.First(i => i.Id == idUser);
 
@@ -309,13 +325,13 @@ namespace MyCollections.Controllers
             collectionItemsViewModel.User = _db.User.First(i => i.Id == IdUser);
             collectionItemsViewModel.UserCollection = _db.UserCollections.First(i => i.Id == IdCollection);
             List<CollectionItem> collectionItemList = _db.CollectionItems.Where(i => i.UserCollectionId == IdCollection).ToList();
+            collectionItemsViewModel.ExtendedFields =
+                _db.ExtendedFields.Where(i => i.UserCollectionId == IdCollection).ToList();
 
             foreach (var item in collectionItemList)
             { 
                 collectionItemsViewModel.Items.Add(_db.Items.First(i => i.Id == item.ItemId));
             }
-
-            collectionItemsViewModel.CustomFields = new List<CustomField>();
 
             return View(collectionItemsViewModel);
         }
@@ -335,6 +351,17 @@ namespace MyCollections.Controllers
             }
 
             return RedirectToAction("ItemsCatalog");
+        }
+
+
+        public IActionResult DeleteCollectionItem(string IdCollection, string IdItem , string IdUser)
+        {
+
+            CollectionItem collectionItem = 
+                _db.CollectionItems.First(i => i.ItemId == IdItem && i.UserCollectionId == IdCollection);
+            _db.CollectionItems.Remove(collectionItem);
+            _db.SaveChanges();
+            return RedirectToAction("CollectionItems", new { IdCollection , IdUser });
         }
 
     }

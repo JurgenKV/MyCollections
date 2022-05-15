@@ -23,7 +23,8 @@ namespace MyCollections.Controllers
         private readonly SignInManager<User> _signInManager;
         private readonly ApplicationContext _db;
 
-        public UserController(UserManager<User> userManager, SignInManager<User> signInManager, ILogger<UserController> logger, ApplicationContext context)
+        public UserController(UserManager<User> userManager, SignInManager<User> signInManager,
+            ILogger<UserController> logger, ApplicationContext context)
         {
             _logger = logger;
             _userManager = userManager;
@@ -40,10 +41,9 @@ namespace MyCollections.Controllers
                 if (User.Identity.Name == u.UserName)
                 {
                     return RedirectToAction("Login", "User");
-
                 }
             }
-            
+
             return View();
         }
 
@@ -56,8 +56,6 @@ namespace MyCollections.Controllers
         [HttpPost]
         public async Task<IActionResult> Registration(RegisterViewModel model)
         {
-
-            
             if (ModelState.IsValid)
             {
                 User user = new User
@@ -83,6 +81,7 @@ namespace MyCollections.Controllers
                     }
                 }
             }
+
             return View(model);
         }
 
@@ -91,9 +90,9 @@ namespace MyCollections.Controllers
         {
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
+
         [HttpPost]
         [Route("User/Login")]
-
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
@@ -130,6 +129,7 @@ namespace MyCollections.Controllers
                     ModelState.AddModelError("", "Login or Password is incorrect or you are blocked");
                 }
             }
+
             return View(model);
         }
 
@@ -140,7 +140,7 @@ namespace MyCollections.Controllers
             return RedirectToAction("Registration", "User");
         }
 
-        [HttpGet]
+       
         public IActionResult AdminMenu()
         {
             var users = _userManager.Users.ToList();
@@ -154,38 +154,33 @@ namespace MyCollections.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> MultiplyBlock(string[] usersId)
+        public async Task<IActionResult> MultiplyBlock(string usersId)
         {
             bool toOut = false;
             if (usersId != null)
             {
-                foreach (var u in usersId)
+                var user = await _userManager.FindByIdAsync(usersId);
+                if (user != null)
                 {
-                    var user = await _userManager.FindByIdAsync(u);
-                    if (user != null)
-                    {
-                        user.IsActive = false;
-                        await _userManager.UpdateAsync(user);
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "User Not Found");
-
-                    }
+                    user.IsActive = false;
+                    await _userManager.UpdateAsync(user);
+                }
+                else
+                {
+                    ModelState.AddModelError("", "User Not Found");
                 }
             }
+
             return RedirectToAction("AdminMenu", "User");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> MultiplyUnblock(string[] usersId)
+        public async Task<IActionResult> MultiplyUnblock(string usersId)
         {
             if (usersId != null)
             {
-                foreach (var u in usersId)
-                {
-                    var user = await _userManager.FindByIdAsync(u);
+                var user = await _userManager.FindByIdAsync(usersId);
                     if (user != null)
                     {
                         user.IsActive = true;
@@ -195,19 +190,18 @@ namespace MyCollections.Controllers
                     {
                         ModelState.AddModelError("", "User Not Found");
                     }
-                }
             }
+
             return RedirectToAction("AdminMenu");
         }
 
-        public async Task<IActionResult> MultiplySetUserRoot(string[] usersId)
+        public async Task<IActionResult> MultiplySetUserRoot(string usersId)
         {
             bool toOut = false;
             if (usersId != null)
             {
-                foreach (var u in usersId)
-                {
-                    var user = await _userManager.FindByIdAsync(u);
+
+                    var user = await _userManager.FindByIdAsync(usersId);
                     if (user != null)
                     {
                         user.AdminRoot = false;
@@ -216,22 +210,20 @@ namespace MyCollections.Controllers
                     else
                     {
                         ModelState.AddModelError("", "User Not Found");
-
                     }
-                }
             }
+
             return RedirectToAction("AdminMenu", "User");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> MultiplySetAdminRoot(string[] usersId)
+        public async Task<IActionResult> MultiplySetAdminRoot(string usersId)
         {
             if (usersId != null)
             {
-                foreach (var u in usersId)
-                {
-                    var user = await _userManager.FindByIdAsync(u);
+
+                    var user = await _userManager.FindByIdAsync(usersId);
                     if (user != null)
                     {
                         user.AdminRoot = true;
@@ -241,35 +233,62 @@ namespace MyCollections.Controllers
                     {
                         ModelState.AddModelError("", "User Not Found");
                     }
-                }
+
             }
+
             return RedirectToAction("AdminMenu");
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> MultiplyDelete(string[] usersId)
+        public async Task<IActionResult> MultiplyDelete(string usersId)
         {
             bool toOut = false;
             if (usersId != null)
             {
-                foreach (var u in usersId)
+                var user = await _userManager.FindByIdAsync(usersId);
+                if (user != null)
                 {
-                    var user = await _userManager.FindByIdAsync(u);
-                    if (user != null)
+                    List<UserCollection> userCollections =
+                        _db.UserCollections.Where(i => i.UserId == user.Id).ToList();
+                    foreach (var collection in userCollections)
                     {
-                        await _userManager.DeleteAsync(user);
-                        
-                        if (User.Identity.Name == user.UserName)
+                        List<CollectionItem> collectionItems = _db.CollectionItems
+                            .Where(i => i.UserCollectionId == collection.Id).ToList();
+                        foreach (var collectionItem in collectionItems)
                         {
-                            toOut = true;
+                            _db.CollectionItems.Remove(collectionItem);
                         }
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "User Not Found");
 
+                        _db.UserCollections.Remove(collection);
                     }
+
+                    List<ItemComment> itemComments =
+                        _db.ItemComments.Where(i => i.UserName == user.UserName).ToList();
+                    foreach (var comment in itemComments)
+                    {
+                        _db.ItemComments.Remove(comment);
+                    }
+
+                    List<ItemLike> itemLikes =
+                        _db.ItemLikes.Where(i => i.UserId == user.Id).ToList();
+                    foreach (var itemLike in itemLikes)
+                    {
+                        _db.ItemLikes.Remove(itemLike);
+                    }
+
+                    await _userManager.DeleteAsync(user);
+
+                    await _db.SaveChangesAsync();
+
+                    if (User.Identity.Name == user.UserName)
+                    {
+                        toOut = true;
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("", "User Not Found");
                 }
             }
 
@@ -277,11 +296,8 @@ namespace MyCollections.Controllers
             {
                 return await Logout();
             }
-            else
-            {
-                return RedirectToAction("Index", "User");
-            }
 
+           return RedirectToAction("AdminMenu");
         }
 
         public IActionResult Privacy()
@@ -307,14 +323,13 @@ namespace MyCollections.Controllers
             {
                 user = _db.User.First(i => i.UserName == User.Identity.Name);
             }
-            
-            userProfile.UserCollections =  _db.UserCollections.Where(coll => coll.UserId.Equals(user.Id)).ToList();
+
+            userProfile.UserCollections = _db.UserCollections.Where(coll => coll.UserId.Equals(user.Id)).ToList();
 
             userProfile.User = user;
-            userProfile.CustomField = new CustomField();
+            userProfile.ExtendedFields = new ExtendedField();
 
             return View(userProfile);
         }
-
     }
 }

@@ -13,6 +13,7 @@ namespace MyCollections.ViewModels
         public List<UserCollection> TopFiveCollections;
         public List<UserCollection> UserCollections;
         public User User;
+        public IEnumerable<string> TagCloude;
 
     }
 }

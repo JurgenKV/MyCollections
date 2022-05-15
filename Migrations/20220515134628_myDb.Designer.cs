@@ -10,8 +10,8 @@ using MyCollections.Models;
 namespace MyCollections.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220514230717_MyDb")]
-    partial class MyDb
+    [Migration("20220515134628_myDb")]
+    partial class myDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -174,18 +174,38 @@ namespace MyCollections.Migrations
                     b.ToTable("CollectionItems");
                 });
 
-            modelBuilder.Entity("MyCollections.Models.CustomField", b =>
+            modelBuilder.Entity("MyCollections.Models.DataField", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("CustomFieldId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Data")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("ExtendedFieldId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ItemId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExtendedFieldId");
+
+                    b.ToTable("DataFields");
+                });
+
+            modelBuilder.Entity("MyCollections.Models.ExtendedField", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -195,11 +215,9 @@ namespace MyCollections.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ItemId");
-
                     b.HasIndex("UserCollectionId");
 
-                    b.ToTable("CustomFields");
+                    b.ToTable("ExtendedFields");
                 });
 
             modelBuilder.Entity("MyCollections.Models.Item", b =>
@@ -437,12 +455,15 @@ namespace MyCollections.Migrations
                         .HasForeignKey("UserCollectionId");
                 });
 
-            modelBuilder.Entity("MyCollections.Models.CustomField", b =>
+            modelBuilder.Entity("MyCollections.Models.DataField", b =>
                 {
-                    b.HasOne("MyCollections.Models.Item", null)
-                        .WithMany("CustomFields")
-                        .HasForeignKey("ItemId");
+                    b.HasOne("MyCollections.Models.ExtendedField", null)
+                        .WithMany("dataFields")
+                        .HasForeignKey("ExtendedFieldId");
+                });
 
+            modelBuilder.Entity("MyCollections.Models.ExtendedField", b =>
+                {
                     b.HasOne("MyCollections.Models.UserCollection", null)
                         .WithMany("CustomFields")
                         .HasForeignKey("UserCollectionId");
@@ -473,11 +494,14 @@ namespace MyCollections.Migrations
                         .HasForeignKey("UserId");
                 });
 
+            modelBuilder.Entity("MyCollections.Models.ExtendedField", b =>
+                {
+                    b.Navigation("dataFields");
+                });
+
             modelBuilder.Entity("MyCollections.Models.Item", b =>
                 {
                     b.Navigation("CollectionItems");
-
-                    b.Navigation("CustomFields");
 
                     b.Navigation("ItemComments");
 

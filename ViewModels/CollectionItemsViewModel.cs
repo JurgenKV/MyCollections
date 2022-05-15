@@ -11,6 +11,7 @@ namespace MyCollections.ViewModels
         public User User;
         public UserCollection UserCollection;
         public List<Item> Items;
-        public List<CustomField> CustomFields;
+        public List<ExtendedField> ExtendedFields;
+        public List<DataField> DataFields;
     }
 }

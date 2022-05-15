@@ -10,21 +10,17 @@
 
 
 </div>
-<form asp-controller="User">
-    <text> Admin Bar:  </text>
-    <input class="btn btn-outline-danger" type="submit" name="submit" value="Delete" formmethod="post" formaction="~/User/MultiplyDelete" style="border-color: white" />
-    <input class="btn btn-outline-warning" type="submit" name="submit" value="Block" formmethod="post" formaction="~/User/MultiplyBlock" style="border-color: white" />
-    <input class="btn btn-outline-success" type="submit" name="submit" value="Unblock" formmethod="post" formaction="~/User/MultiplyUnblock" style="border-color: white" />
-    <input class="btn btn-outline-dark" type="submit" name="submit" value="Set User Role" formmethod="post" formaction="~/User/MultiplySetUserRoot" style="border-color: white" />
-    <input class="btn btn-outline-primary" type="submit" name="submit" value="Set Admin Role" formmethod="post" formaction="~/User/MultiplySetAdminRoot" style="border-color: white" />
-    <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#staticBackdropCreate">
-        Add Item
-    </button>
-    <table class="table table-borderless table-bordered">
-        <thead class="text-dark">
+
+<text> Admin Bar:  </text>
+
+<button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#staticBackdropCreate">
+    Add Item
+</button>
+<table class="table table-borderless table-bordered">
+    <thead class="text-dark">
         <tr>
             <th>
-                <input type="checkbox" id="check_all" onclick="CheckAll('chek', this)"> Check all
+                Admin
             </th>
 
             <th>
@@ -43,50 +39,86 @@
 
 
         </tr>
-        </thead>
+    </thead>
 
-        @foreach (var i in Model)
-        {
-            <tr>
-                <td>
-                    <input type="checkbox" name="usersId" value="@i.Id" class="chek">
-                </td>
-                <td>
-                    <input name="name" value="@i.UserName" style="visibility: hidden" />
-                    <input type="submit" name="button" value="@i.UserName" class="btn btn-link text-dark" formaction="~/User/UserProfile">
+    @foreach (var i in Model)
+    {
+        <tr>
+            <td>
+                <form method="post" asp-controller="User">
 
-                    @Html.ActionLink(@i.UserName,"UserProfile", "User", @i.UserName)
-                </td>
-                <td>
-                    @Html.DisplayFor(mitem => i.Email)
-                </td>
-                <td>
-                    @if (i.IsActive)
-                    {
-                        <text ><span style="color: #34ce57">Not Blocked </span></text>
-                    }
-                    else
-                    {
-                        <text ><span style="color: red"> Blocked </span></text>
-                    }
-                </td>
-                <td>
-                    @if (i.AdminRoot)
-                    {
-                        <text ><span style="color: #00bfff">Admin </span></text>
-                    }
-                    else
-                    {
-                        <text ><span style="color: black"> User </span></text>
-                    }
-                </td>
+                    <div class="dropdown">
+                        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                            Действие
+                        </a>
+
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+
+                            <li>
+                                <input class="btn btn-outline-danger" type="submit" name="Id" value="Delete" formmethod="post" formaction="~/User/MultiplyDelete" style="border-color: white" />
+                                <input name="usersId" value="@i.Id" style="visibility: hidden" size="1" />
+                            </li>
+
+                            <li>
+                                <input class="btn btn-outline-warning" type="submit" name="Id" value="Block" formmethod="post" formaction="~/User/MultiplyBlock" style="border-color: white"/>
+                                <input name="usersId" value="@i.Id" style="visibility: hidden" size="1" />
+                            </li>
+
+                            <li>
+                                <input class="btn btn-outline-success" type="submit" name="Id" value="Unblock" formmethod="post" formaction="~/User/MultiplyUnblock" style="border-color: white"/>
+                                <input name="usersId" value="@i.Id" style="visibility: hidden" size="1" />
+                            </li>
+
+                            <li>
+                                <input class="btn btn-outline-dark" type="submit" name="Id" value="Set User Role" formmethod="post" formaction="~/User/MultiplySetUserRoot" style="border-color: white"/>
+                                <input name="usersId" value="@i.Id" style="visibility: hidden" size="1" />
+                            </li>
+                            <li>
+                                <input class="btn btn-outline-primary" type="submit" name="Id" value="Set Admin Role" formmethod="post" formaction="~/User/MultiplySetAdminRoot" style="border-color: white"/>
+                                <input name="usersId" value="@i.Id" style="visibility: hidden" size="1" />
+                            </li>
+                            }
+
+                        </ul>
+                    </div>
+                </form>
+            </td>
+            <td>
+                <form>
+                    <input name="name" value="@i.UserName" style="visibility: hidden" size="1" />
+                    <input type="submit" name="name" value="@i.UserName" class="btn btn-link text-dark" formaction="~/User/UserProfile" style=" align-content: center">
+                </form>
+            </td>
+            <td>
+                @Html.DisplayFor(mitem => i.Email)
+            </td>
+            <td>
+                @if (i.IsActive)
+                {
+                    <text ><span style="color: #34ce57">Not Blocked </span></text>
+                }
+                else
+                {
+                    <text ><span style="color: red"> Blocked </span></text>
+                }
+            </td>
+            <td>
+                @if (i.AdminRoot)
+                {
+                    <text ><span style="color: #00bfff">Admin </span></text>
+                }
+                else
+                {
+                    <text ><span style="color: black"> User </span></text>
+                }
+            </td>
 
 
-            </tr>
+        </tr>
 
-        }
-    </table>
-</form>
+    }
+</table>
+
 
 <div class="modal fade" id="staticBackdropCreate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -104,11 +136,11 @@
 
                     <div class="mb-3">
                         <label for="rendered-form" class="form-label">Item Name</label>
-                        <input type="text" class="form-control" id="IDname" name="ItemTag" required>
+                        <input type="text" class="form-control" id="IDname" name="ItemName" required>
                     </div>
                     <div class="mb-3">
                         <label for="rendered-form" class="form-label">Tag</label>
-                        <input type="text" class="form-control" id="IDtag" name="ItemName" required>
+                        <input type="text" class="form-control" id="IDtag" name="ItemTag" required>
                     </div>
                     <div class="mb-3">
                         <label for="rendered-form" class="form-label">Description</label>
@@ -130,7 +162,7 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
 
 
-<script>
+@*<script>
     function CheckAll(className, elem) {
         var elements = document.getElementsByClassName(className);
         var l = elements.length;
@@ -144,6 +176,6 @@
             }
         }
     }
-</script>
+</script>*@
 
 
