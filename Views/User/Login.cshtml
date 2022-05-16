@@ -1,32 +1,10 @@
 ﻿@model MyCollections.ViewModels.LoginViewModel
 <link href="~/css/RegLoginPage.css" rel="stylesheet" />
 
-@*<h2>Login</h2>
-<form method="post" asp-controller="User" asp-action="Login"
-      asp-route-returnUrl="@Model.ReturnUrl">
-    <div asp-validation-summary="ModelOnly"></div>
-    <div>
-        <label asp-for="Email">UserName</label><br />
-        <input asp-for="Email" />
-        <span asp-validation-for="Email"></span>
-    </div>
-    <div>
-        <label asp-for="Password">
-            Password
-        </label><br />
-        <input asp-for="Password" />
-        <span asp-validation-for="Password"></span>
-    </div>
-
-    <div>
-        <input type="submit" value="Enter" />
-    </div>
-</form>*@
-
 <form method="post" class="ui-form" asp-controller="User" asp-action="Login"
       asp-route-returnUrl="@Model.ReturnUrl">
 
-    <h3>Войти</h3>
+    <h3>SIGN IN</h3>
     <div class="form-row">
         <label asp-for="Email">UserName</label><br/>
         <input asp-for="Email"/>
@@ -39,5 +17,5 @@
         <input asp-for="Password" />
         <span asp-validation-for="Password"></span>
     </div>
-    <p><input type="submit" value="Войти"></p>
+    <p><input type="submit" value="SIGN IN"></p>
 </form>

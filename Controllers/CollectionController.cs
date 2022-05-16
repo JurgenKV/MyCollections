@@ -1,22 +1,27 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using BundlerMinifier;
+using CsvHelper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic;
 using MyCollections.Models;
 using MyCollections.ViewModels;
-using Microsoft.Extensions.FileProviders;
+
 
 namespace MyCollections.Controllers
 {
@@ -70,6 +75,78 @@ namespace MyCollections.Controllers
 
             _db.Items.Add(item);
             await _db.SaveChangesAsync();
+
+            return RedirectToAction("AdminMenu", "User");
+        }
+
+        public async Task<IActionResult> UpdateItem(string IdItem, string NewName, string NewTag, string NewDescripton,
+            IFormFile image)
+        {
+            if (IdItem != null)
+            {
+                Item Item = _db.Items.First(i => i.Id == IdItem);
+
+                if (!string.IsNullOrEmpty(NewName))
+                    Item.Name = NewName;
+
+                if (!string.IsNullOrEmpty(NewTag))
+                    Item.Tag = NewTag;
+
+                if (!string.IsNullOrEmpty(NewDescripton))
+                    Item.Description = NewDescripton;
+
+                if (image != null)
+                {
+                    string path = "wwwroot/ImageStorage/ItemImage/" + Path.GetFileName(image.FileName);
+                    System.IO.File.Delete(Strings.Replace(Item.Image, "~/", "wwwroot/"));
+                    await using var fileStream = new FileStream(path, FileMode.Create);
+                    await image.CopyToAsync(fileStream);
+                    Item.Image = Strings.Replace(path, "wwwroot/", "~/");
+                }
+
+                _db.Update(Item);
+                await _db.SaveChangesAsync();
+            }
+
+            return RedirectToAction("AdminMenu", "User");
+        }
+
+        public IActionResult DeleteItem(string IdItem)
+        {
+            if (_db.Items.Any(i => i.Id == IdItem))
+            {
+                Item Item = _db.Items.First(i => i.Id == IdItem);
+                try
+                {
+                    if (Item.Image != null)
+                        System.IO.File.Delete(Strings.Replace(Item.Image, "~/", "wwwroot/"));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+
+                List<CollectionItem> collection =
+                    _db.CollectionItems.Where(i => i.ItemId == Item.Id).ToList();
+                _db.CollectionItems.RemoveRange(collection);
+
+                List<ItemComment> itemComments =
+                    _db.ItemComments.Where(i => i.ItemId == Item.Id).ToList();
+                _db.ItemComments.RemoveRange(itemComments);
+
+                List<ItemLike> itemLikes =
+                    _db.ItemLikes.Where(i => i.ItemId == Item.Id).ToList();
+                _db.ItemLikes.RemoveRange(itemLikes);
+
+                List<DataField> dataFields =
+                    _db.DataFields.Where(i => i.ItemId == Item.Id).ToList();
+                _db.DataFields.RemoveRange(dataFields);
+
+                List<Item> items =
+                    _db.Items.Where(i => i.Id == Item.Id).ToList();
+                _db.Items.RemoveRange(items);
+                _db.SaveChanges();
+            }
 
             return RedirectToAction("AdminMenu", "User");
         }
@@ -187,7 +264,7 @@ namespace MyCollections.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCollection(string idUser, string name, string tag, string description,
+        public async Task<IActionResult> CreateCollection(string idUser, string name, string tag, string description,
             IFormFile image, string[] Fields)
         {
             string path = null;
@@ -237,36 +314,40 @@ namespace MyCollections.Controllers
             return RedirectToAction("UserProfile", "User", new { user.UserName });
         }
 
-        ///update - понять как рпердать данные в форму из которой будет задействована эта функция
         [HttpPost]
-        public IActionResult UpdateCollection(string idUser, string id, string name, string tag, string description,
+        public IActionResult UpdateCollection(string idUser, string IdCollection, string NewName, string NewTag,
+            string NewDescripton,
             IFormFile image)
         {
             User user = _db.User.First(i => i.Id == idUser);
-            UserCollection userCollection = _db.UserCollections.First(i => i.Id == id);
-            string path = "~/ImageStorage/CollectionImage/" + user.Id + "/" + image.FileName;
 
-            if (!string.IsNullOrEmpty(name))
-                userCollection.Name = name;
-
-            if (!string.IsNullOrEmpty(tag))
-                userCollection.Tag = tag;
-
-            if (!string.IsNullOrEmpty(description))
-                userCollection.Description = description;
-
-            if (!string.IsNullOrEmpty(image.FileName))
+            if (IdCollection != null)
             {
-                if (!path.Equals(userCollection.Image))
+                UserCollection userCollection = _db.UserCollections.First(i => i.Id == IdCollection);
+
+                if (!string.IsNullOrEmpty(NewName))
+                    userCollection.Name = NewName;
+
+                if (!string.IsNullOrEmpty(NewTag))
+                    userCollection.Tag = NewTag;
+
+                if (!string.IsNullOrEmpty(NewDescripton))
+                    userCollection.Description = NewDescripton;
+
+                if (image != null)
                 {
-                    System.IO.File.Delete(userCollection.Image);
+                    string path = "wwwroot/ImageStorage/CollectionImage/" + user.Id + "/" +
+                                  Path.GetFileName(image.FileName);
+                    System.IO.File.Delete(Strings.Replace(userCollection.Image, "~/", "wwwroot/"));
+                    using var fileStream = new FileStream(path, FileMode.Create);
+                    image.CopyTo(fileStream);
+                    userCollection.Image = Strings.Replace(path, "wwwroot/", "~/");
                 }
 
-                using var fileStream = new FileStream(path, FileMode.Create);
-                image.CopyTo(fileStream);
+                _db.Update(userCollection);
+                _db.SaveChanges();
             }
 
-            _db.SaveChanges();
             return RedirectToAction("UserProfile", "User", new { user.UserName });
         }
 
@@ -280,7 +361,7 @@ namespace MyCollections.Controllers
                 try
                 {
                     if (userCollection.Image != null)
-                        System.IO.File.Delete(userCollection.Image);
+                        System.IO.File.Delete(Strings.Replace(userCollection.Image, "~/", "wwwroot/"));
                 }
                 catch (Exception ex)
                 {
@@ -289,18 +370,10 @@ namespace MyCollections.Controllers
 
                 List<CollectionItem> collection =
                     _db.CollectionItems.Where(i => i.UserCollectionId == userCollection.Id).ToList();
-                for (int i = 0; i < collection.Count(); i++)
-                {
-                    _db.CollectionItems.Remove(collection[i]);
-                }
-
+                _db.CollectionItems.RemoveRange(collection);
                 List<ExtendedField> extendedFields =
                     _db.ExtendedFields.Where(i => i.UserCollectionId == userCollection.Id).ToList();
-                for (int i = 0; i < extendedFields.Count(); i++)
-                {
-                    _db.ExtendedFields.Remove(extendedFields[i]);
-                }
-
+                _db.ExtendedFields.RemoveRange(extendedFields);
                 _db.UserCollections.Remove(userCollection);
                 _db.SaveChanges();
             }
@@ -336,10 +409,12 @@ namespace MyCollections.Controllers
 
         public IActionResult CollectionItems(string IdCollection, string IdUser)
         {
-            CollectionItemsViewModel collectionItemsViewModel = new CollectionItemsViewModel();
-            collectionItemsViewModel.User = new User();
-            collectionItemsViewModel.Items = new List<Item>();
-            collectionItemsViewModel.UserCollection = new UserCollection();
+            CollectionItemsViewModel collectionItemsViewModel = new CollectionItemsViewModel
+            {
+                User = new User(),
+                Items = new List<Item>(),
+                UserCollection = new UserCollection()
+            };
 
             collectionItemsViewModel.User = _db.User.First(i => i.Id == IdUser);
             collectionItemsViewModel.UserCollection = _db.UserCollections.First(i => i.Id == IdCollection);
@@ -432,54 +507,46 @@ namespace MyCollections.Controllers
         }
 
 
-        public  FileResult ExportCSV(string CollectionId, string name)
+        public IActionResult ExportCSV(string CollectionId, string name)
         {
-            List<CollectionItem> collectionItems = _db.CollectionItems.Where(i => i.UserCollectionId == CollectionId).ToList();
-            UserCollection userCollection = _db.UserCollections.First(i => i.Id == CollectionId);
-            List<Item> items = new List<Item>();
-
-            foreach (var collectionItem in collectionItems)
+            List<CollectionItem> collectionItems =
+                _db.CollectionItems.Where(i => i.UserCollectionId == CollectionId).ToList();
+            if (collectionItems != null)
             {
-                items.Add(_db.Items.First(i => i.Id == collectionItem.ItemId));
-            }
-            var csv = new StringBuilder();
+                UserCollection userCollection = _db.UserCollections.First(i => i.Id == CollectionId);
+                List<Item> items = new List<Item>();
 
-            //for (int i = 0; i < items.Count(); i++)
-            //{
-            //    var first = items[i].ToString();
-
-            //    var newLine = string.Format("{0},{1}", first);
-            //    csv.AppendLine(newLine);
-            //}
-
-            string path = "C:\\Users\\JurgenKV\\source\\repos\\MyCollections\\wwwroot\\";
-
-            using (var w = new StreamWriter(path))
-            {
-                for (int i = 0; i < items.Count(); i++)
+                foreach (var collectionItem in collectionItems)
                 {
-                    var first = items[i].ToString();
-
-                    var line = string.Format("{0},{1},{2}", first);
-                    w.WriteLine(line);
-                    w.Flush();
+                    items.Add(_db.Items.First(i => i.Id == collectionItem.ItemId));
                 }
+
+                var lines = new List<string>();
+                IEnumerable<PropertyDescriptor> props = TypeDescriptor.GetProperties(typeof(Item))
+                    .OfType<PropertyDescriptor>();
+                var header = string.Join(",", props.ToList().Select(x => x.Name));
+                lines.Add(header);
+
+                var valueLines = items.Select(row => string.Join(",",
+                    header.Split(',').Select(a => row.GetType().GetProperty(a).GetValue(row, null))));
+                lines.AddRange(valueLines);
+
+                try
+                {
+                    System.IO.File.Delete("wwwroot/Collection.csv");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Data);
+                }
+
+                System.IO.File.WriteAllLines("Collection.csv", lines.ToArray());
+                System.IO.File.Move("Collection.csv", "wwwroot/Collection.csv");
+                var filepath = Path.Combine("~/", "Collection.csv");
+                return File(filepath, "text /plain", userCollection.Name);
             }
 
-            
-
-            string fileName = userCollection.Name + ".csv";
-
-           // File.AppendAllText(path, csv.ToString());
-            
-
-           // File.WriteAllText("", csv.ToString());
-
-           // return File(csv, "text/csv", fileName); // this is the key!
-
-           return null;
+            return null;
         }
-
-       
     }
 }

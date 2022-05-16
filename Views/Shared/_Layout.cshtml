@@ -31,8 +31,8 @@
             @if (User.Identity.IsAuthenticated)
             {
         <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" method="post" asp-action="ItemsCatalog">
-            <input type="search" name="str" placeholder="Поиск по каталогу">
-            <input type="submit" value="Найти" formaction="~/Collection/ItemsCatalog">
+            <input type="search" name="str" placeholder="Catalog">
+            <input  type="submit" value="Search" formaction="~/Collection/ItemsCatalog">
         </form>
 
                 <form method="post" asp-controller="User" asp-action="UserProfile">
@@ -41,7 +41,7 @@
                             <p>@User.Identity.Name</p>
                         </a>
 
-                        <input name="name" , value="@User.Identity.Name" style="visibility: hidden" />
+
                         <ul class="dropdown-menu text-start position-absolute top-100 start-100 translate-middle" aria-labelledby="dropdownUser1">
                             <li>
                                 <input type="submit" name="button" value="Profile" class="btn btn-link text-dark" formaction="~/User/UserProfile">
@@ -50,7 +50,7 @@
                                 <input type="submit" value="Sign out" class="btn btn-link text-dark" asp-controller="User" asp-action="Logout" />
                             </li>
                         </ul>
-
+                        <input name="name" value="@User.Identity.Name" style="visibility: hidden" size="1" />
                     </div>
                 </form>
             }
@@ -58,7 +58,7 @@
             {
                 <div class="col-md-3 text-end">
                     <form>
-                        <input type="submit" value="Login" class="btn btn-outline-primary me-2" asp-controller="User" asp-action="Login" />
+                        <input type="submit" value="Sign in" class="btn btn-outline-primary me-2" asp-controller="User" asp-action="Login" />
                         <input type="submit" value="Sign-up" class="btn btn-primary" asp-controller="User" asp-action="Registration" />
                     </form>
                 </div>

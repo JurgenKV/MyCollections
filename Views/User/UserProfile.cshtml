@@ -7,8 +7,7 @@
 
 }
 
-
-<link href="~/css/ItemsPage.css" rel="stylesheet"/>
+@*<link href="~/css/ItemsPage.css" rel="stylesheet"/>*@
 <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet"/>
 <form id="rendered-form">
 
@@ -22,53 +21,112 @@
 
     </div>
 </form>
-
+<p></p>
+@if((User.Identity.Name == Model.User.UserName && Model.User.IsActive) || (Model.User.AdminRoot.Equals(true) && User.Identity.Name == Model.User.UserName)){
 
 <text> Collection Tools: </text>
+    <div class="btn-group">
 
-<form method="post">
-    <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#staticBackdropCreate">
-        Create
-    </button>
-    <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" onclick="Update('chek', this)">
-        Update
-    </button>
-    @*<input class="" type="submit" name="submit" value="Update" formmethod="post" formaction="~/Collection/UpdateCollection" style="border-color: white" />*@
-    <input class="btn btn-outline-danger" type="submit" name="submit" value="Delete" formmethod="post" formaction="~/Collection/DeleteCollection" style="border-color: white"/>
-    <input name="userName" value="@Model.User.UserName" style="visibility: hidden"/>
-
+        <button type="button" class="btn btn btn-success" data-bs-toggle="modal" data-bs-target="#staticBackdropCreate">
+            Create
+        </button>
         <div class="dropdown">
-            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false" data-info="4">
-                csv
+            <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLin" data-bs-toggle="dropdown" aria-expanded="false" data-info="4">
+                Update
             </a>
 
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <form method="post" asp-controller="Collection" asp-action="UpdateDataField" enctype="multipart/form-data" onSubmit="window.location.reload()">
-                    <input name="name" value="@Model.User.UserName" style="visibility: hidden" size="1" />
-                    <select name="CollectionId">
-                        @foreach (var collection in @Model.UserCollections)
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLin">
+                <form method="post" asp-controller="Collection" asp-action="UpdateCollection" enctype="multipart/form-data" onSubmit="window.location.reload()">
+
+                    <select name="IdCollection">
+                        @foreach (var userCollection in @Model.UserCollections)
                         {
-                            <option name="FieldId" value="@collection.Id">
-                                @collection.Name
+                            <option name="IdCollection" value="@userCollection.Id">
+                                @userCollection.Name
                             </option>
                         }
                     </select>
-                    <input class="btn btn-primary" type="submit" value="Update" formaction="~/Collection/ExportCSV">
+                    <input name="IdUser" value="@Model.User.Id" style="visibility: hidden" size="1" />
+                    <input name="NewName" value="" placeholder="New Name" />
+                    <input name="NewTag" value="" placeholder="New Tag" />
+                    <input name="NewDescripton" value="" placeholder="New Description" />
+                    <div class="mb-3">
+                        <label for="rendered-form" class="form-label">Загрузить изображение</label>
+                        <input type="file" class="form-control" id="image" name="image">
+                    </div>
+                    <input class="btn btn-primary" type="submit" value="Update" formaction="~/Collection/UpdateCollection">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </form>
             </div>
         </div>
+
+
+        <div class="dropdown">
+            <a class="btn btn-danger dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false" data-info="4">
+                Delete
+            </a>
+
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <form method="post" asp-controller="Collection" asp-action="DeleteCollection" enctype="multipart/form-data" onSubmit="window.location.reload()">
+
+                    <select name="id">
+                        @foreach (var collection in @Model.UserCollections)
+                        {
+                            <option name="id" value="@collection.Id">
+                                @collection.Name
+                            </option>
+                        }
+                    </select>
+                    <input name="name" value="@Model.User.UserName" style="visibility: hidden" size="1" />
+                    <input class="btn btn-danger" type="submit" value="Dalete" formaction="~/Collection/DeleteCollection">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
+
+
+        <div class="dropdown">
+            <a class="btn btn-warning dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false" data-info="4">
+                Csv
+            </a>
+
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <form method="post" asp-controller="Collection" asp-action="UpdateDataField" enctype="multipart/form-data" onSubmit="window.location.reload()">
+
+                    <select name="CollectionId">
+                        @foreach (var collection in @Model.UserCollections)
+                        {
+                            <option name="CollectionId" value="@collection.Id">
+                                @collection.Name
+                            </option>
+                        }
+                    </select>
+                    <input name="name" value="@Model.User.UserName" style="visibility: hidden" size="1" />
+                    <input class="btn btn-warning" type="submit" value="Download" formaction="~/Collection/ExportCSV">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
+
+        
+    </div>
+}
+<form method="post" asp-action="UserProfile">
+    <input name="IdUser" value="@Model.User.Id" style="visibility: hidden" size="1" />
+    <p>
+        <input type="search" name="str" placeholder="Collection Search">
+        <input class="btn btn-dark" type="submit" value="Search" formaction="~/User/UserProfile">
+    </p>
+
+</form>
+<form method="post">
     @if (Model.UserCollections != null)
     {
         <table class="table table-borderless table-bordered">
             <thead class="text-dark">
-            <tr>
+            <tr class="text-center">
                 <th>
 
-                </th>
-
-                <th>
-                    
                 </th>
 
                 <th>
@@ -88,22 +146,20 @@
             @foreach (var i in Model.UserCollections)
             {
                 <tr>
-                    <td>
-                        <input type="radio" name="id" value="@i.Id" class="check">
-                    </td>
-
-                    <td>
+                    <td class="text-center">
                         <img src="@Url.Content(i.Image)" style="width: 150px; height: 200px;" alt=""/>
                     </td>
-                    <td>
+                    <td class="text-center">
                         <form method="post">
-                            <input type="submit" name="button" value="@i.Name" class="btn btn-link text-dark" formaction="~/Collection/CollectionItems">
-                            <input name="IdUser" value="@Model.User.Id" style="visibility: hidden" />
-                            <input name="IdCollection" value="@i.Id" style="visibility: hidden" />
-                        </form>
+                           
+                                <input type="submit" name="button" value="@i.Name" class="btn btn-link text-dark" formaction="~/Collection/CollectionItems">
+                                <input name="IdUser" value="@Model.User.Id" style="visibility: hidden" size="1" />
+                                <input name="IdCollection" value="@i.Id" style="visibility: hidden" size="1" />
+                          
                             
+                        </form>
                     </td>
-                    <td>
+                    <td class="text-center">
                         @Html.DisplayFor(mitem => i.Tag)
                     </td>
 
@@ -117,8 +173,6 @@
 </form>
 
 
-<!-- Modal -->
-
 <div class="modal fade" id="staticBackdropCreate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -126,7 +180,7 @@
                 <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form method="post" asp-controller="Collection" asp-action="AddCollection" enctype="multipart/form-data" onSubmit="window.location.reload()">
+            <form method="post" asp-controller="Collection" asp-action="CreateCollection" enctype="multipart/form-data" onSubmit="window.location.reload()">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="rendered-form" class="form-label">Загрузить изображение</label>
@@ -147,7 +201,7 @@
                     </div>
                     <div>
                         <div id="input0"></div>
-                        <div class="add" onclick="addInput()">Add Custom Field</div>
+                        <div class="add" onclick="addInput()">+ Add Custom Field</div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -155,66 +209,13 @@
                 </div>
                 <input name="idUser" value="@Model.User.Id" style="visibility: hidden"/>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <input class="btn btn-primary" type="submit" value="Create" formaction="~/Collection/AddCollection">
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="staticBackdropUpdate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="post" asp-controller="Collection" asp-action="UpdateCollection" enctype="multipart/form-data" onSubmit="window.location.reload()">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="rendered-form" class="form-label">Загрузить изображение</label>
-                        <input type="file" class="form-control" id="img" name="image">
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="rendered-form" class="form-label">Название коллекции</label>
-                        <input type="text" class="form-control" id="IDname" name="name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="rendered-form" class="form-label">Tag</label>
-                        <input type="text" class="form-control" id="IDtag" name="tag" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="rendered-form" class="form-label">Description</label>
-                        <input type="text" class="form-control" id="IDdes" name="description">
-                    </div>
-                   
-
-                </div>
-                <div class="modal-footer">
-
-                </div>
-                <input name="idUser" value="@Model.User.Id" style="visibility: hidden"/>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <input class="btn btn-primary" type="submit" value="Create" formaction="~/Collection/AddCollection">
+                <input class="btn btn-success" type="submit" value="Create" formaction="~/Collection/CreateCollection">
             </form>
         </div>
     </div>
 </div>
 
 <script>
-    function Update(className, elem) {
-        var elements = document.getElementsByClassName(className);
-
-        if (elem.checked) {
-            for (var i = 0; i < elements.length; i++) {
-                elements[i].checked = true;
-            }
-        } else {
-            for (var i = 0; i < elements.length; i++) {
-                elements[i].checked = false;
-            }
-        }
-    }
 
     var x = 0;
 

@@ -1,0 +1,6 @@
+Id,Tag,Name,Description,Image,CollectionItems,ItemComments,ItemLikes
+8708c2e7-3572-40a8-8a69-9310a3696d3f,Alcohol,Brandy,The best,,System.Collections.Generic.HashSet`1[MyCollections.Models.CollectionItem],,
+37a1f3ad-1feb-4b7a-9663-aa5800a55488,Film,28 days after,Strange Film,,System.Collections.Generic.HashSet`1[MyCollections.Models.CollectionItem],,
+4f3d0f7c-bf8b-40cb-8fc4-33a6fd38cf4b,Film,Crazy Maks,Mmm,,System.Collections.Generic.HashSet`1[MyCollections.Models.CollectionItem],,
+5afc7164-cba6-445a-bbb2-1349a9ec7293,Film,Brather2,10/10,~/ImageStorage/ItemImage/default.png,System.Collections.Generic.HashSet`1[MyCollections.Models.CollectionItem],,
+7901689f-1958-4fce-8b38-b23584e5a4af,Film,Rak,Clac,,System.Collections.Generic.HashSet`1[MyCollections.Models.CollectionItem],,

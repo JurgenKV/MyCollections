@@ -5,6 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+	  <PackageReference Include="BundlerMinifier.Core" Version="3.2.449" />
+	  <PackageReference Include="CsvHelper" Version="27.2.1" />
 	  <PackageReference Include="EntityFramework" Version="6.4.4" />
 	  <PackageReference Include="jQuery" Version="3.5.1" />
 	  <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />

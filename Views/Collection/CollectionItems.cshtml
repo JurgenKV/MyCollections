@@ -5,8 +5,6 @@
 @{
 
 }
-
-
 <div class="widget widget-comments open" id="comments">
     <div class="block-title">
         [
@@ -17,7 +15,7 @@
         ] Коллекция @Model.UserCollection.Name пользователя @Model.User.UserName
     </div>
 
-    @if (Model.Items != null)
+    @if (Model.Items != null && User.Identity.IsAuthenticated)
     {
         <table class="table table-borderless table-bordered">
             <thead class="text-dark">
@@ -26,11 +24,11 @@
 
                 </th>
 
-                <th>
+                <th class="text-center">
                     image
                 </th>
 
-                <th>
+                <th class="text-center">
                     Item
                 </th>
 
@@ -41,43 +39,49 @@
             {
                 <tr>
                     <td>
-                        @if (User.Identity.Name == Model.User.UserName)
-                        {
-                            <form method="post">
-                                <input class="btn btn-outline-danger" type="submit" name="Id" value="Delete" formmethod="post" formaction="~/Collection/DeleteCollectionItem" style="border-color: white" onSubmit="window.location.reload()"/>
-                                <input name="IdCollection" value="@Model.UserCollection.Id" style="visibility: hidden" size="1"/>
-                                <input name="IdItem" value="@item.Id" style="visibility: hidden" size="1"/>
-                                <input name="IdUser" value="@Model.User.Id" style="visibility: hidden" size="1"/>
+                    @if((User.Identity.Name == Model.User.UserName && Model.User.IsActive) || (Model.User.AdminRoot.Equals(true) && User.Identity.Name == Model.User.UserName)){
+
+                        <form method="post">
+                                <div class="btn-group">
+                                    <input class="btn btn-outline-danger" type="submit" name="Id" value="Delete" formmethod="post" formaction="~/Collection/DeleteCollectionItem" style="border-color: white" onSubmit="window.location.reload()" />
+                                    <input name="IdCollection" value="@Model.UserCollection.Id" style="visibility: hidden" size="1" />
+                                    <input name="IdItem" value="@item.Id" style="visibility: hidden" size="1" />
+                                    <input name="IdUser" value="@Model.User.Id" style="visibility: hidden" size="1" />
+                                </div>
                             </form>
                             <div class="dropdown">
-                                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false" data-info="4">
+                                <a class="btn btn-outline-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false" data-info="4">
                                     Update
                                 </a>
 
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                     <form method="post" asp-controller="Collection" asp-action="UpdateDataField" enctype="multipart/form-data" onSubmit="window.location.reload()">
-                                        <input name="IdUser" value="@Model.User.Id" style="visibility: hidden" size="1" />
-                                        <input name="IdCollection" value="@Model.UserCollection.Id" size="1" style="visibility: hidden" />
-                                        <select name="FieldId">
-                                            @foreach (var Field in @Model.ExtendedFields)
-                                            {
-                                                <option name="FieldId" value="@Field.Id">
-                                                    @Field.Name
-                                                </option>
-                                            }
-                                        </select>
+                                        <div class="btn-group">
+                                            <select name="FieldId">
+                                                @foreach (var Field in @Model.ExtendedFields)
+                                                {
+                                                    <option name="FieldId" value="@Field.Id">
+                                                        @Field.Name
+                                                    </option>
+                                                }
+                                            </select>
+                                            <input name="Data" value="" />
+                                            <input name="IdUser" value="@Model.User.Id" style="visibility: hidden" size="1" />
+                                            <input name="IdCollection" value="@Model.UserCollection.Id" size="1" style="visibility: hidden" />
+                                            
+                                        </div>
                                         <input name="IdUser" value="@Model.User.Id" style="visibility: hidden" size="1" />
                                         <input name="IdItem" value="@item.Id" style="visibility: hidden" size="1" />
-                                        <input name="Data" value="" />
                                         <input class="btn btn-primary" type="submit" value="Update" formaction="~/Collection/UpdateDataField">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                     </form>
                                 </div>
                             </div>
+
                         }
                     </td>
 
-                    <td>
+                    <td class="text-center">
                         <img src="@Url.Content(item.Image)" style="width: 150px; height: 200px;" alt=""/>
                     </td>
                     <td>

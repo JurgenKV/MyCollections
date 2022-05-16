@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MyCollections.Models.User>
+﻿@model MyCollections.ViewModels.AdminMenuViewModel;
 @{
     ViewData["Title"] = "Home Page";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -12,151 +12,200 @@
 </div>
 
 <text> Admin Bar:  </text>
+<div class="btn-group">
+    <button type="button" class="btn btn btn-success" data-bs-toggle="modal" data-bs-target="#staticBackdropCreate">
+        Create Item
+    </button>
+    <div class="dropdown">
+        <a class="btn btn btn-primary" href="#" role="button" id="dropdownMenuLin" data-bs-toggle="dropdown" aria-expanded="false" data-info="4">
+            Update Item
+        </a>
 
-<button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#staticBackdropCreate">
-    Add Item
-</button>
-<table class="table table-borderless table-bordered">
-    <thead class="text-dark">
-        <tr>
-            <th>
-                Admin
-            </th>
-
-            <th>
-                UserName
-            </th>
-
-            <th>
-                Email
-            </th>
-            <th>
-                Status
-            </th>
-            <th>
-                Role
-            </th>
-
-
-        </tr>
-    </thead>
-
-    @foreach (var i in Model)
-    {
-        <tr>
-            <td>
-                <form method="post" asp-controller="User">
-
-                    <div class="dropdown">
-                        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                            Действие
-                        </a>
-
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-
-                            <li>
-                                <input class="btn btn-outline-danger" type="submit" name="Id" value="Delete" formmethod="post" formaction="~/User/MultiplyDelete" style="border-color: white" />
-                                <input name="usersId" value="@i.Id" style="visibility: hidden" size="1" />
-                            </li>
-
-                            <li>
-                                <input class="btn btn-outline-warning" type="submit" name="Id" value="Block" formmethod="post" formaction="~/User/MultiplyBlock" style="border-color: white"/>
-                                <input name="usersId" value="@i.Id" style="visibility: hidden" size="1" />
-                            </li>
-
-                            <li>
-                                <input class="btn btn-outline-success" type="submit" name="Id" value="Unblock" formmethod="post" formaction="~/User/MultiplyUnblock" style="border-color: white"/>
-                                <input name="usersId" value="@i.Id" style="visibility: hidden" size="1" />
-                            </li>
-
-                            <li>
-                                <input class="btn btn-outline-dark" type="submit" name="Id" value="Set User Role" formmethod="post" formaction="~/User/MultiplySetUserRoot" style="border-color: white"/>
-                                <input name="usersId" value="@i.Id" style="visibility: hidden" size="1" />
-                            </li>
-                            <li>
-                                <input class="btn btn-outline-primary" type="submit" name="Id" value="Set Admin Role" formmethod="post" formaction="~/User/MultiplySetAdminRoot" style="border-color: white"/>
-                                <input name="usersId" value="@i.Id" style="visibility: hidden" size="1" />
-                            </li>
-                            }
-
-                        </ul>
-                    </div>
-                </form>
-            </td>
-            <td>
-                <form>
-                    <input name="name" value="@i.UserName" style="visibility: hidden" size="1" />
-                    <input type="submit" name="name" value="@i.UserName" class="btn btn-link text-dark" formaction="~/User/UserProfile" style=" align-content: center">
-                </form>
-            </td>
-            <td>
-                @Html.DisplayFor(mitem => i.Email)
-            </td>
-            <td>
-                @if (i.IsActive)
-                {
-                    <text ><span style="color: #34ce57">Not Blocked </span></text>
-                }
-                else
-                {
-                    <text ><span style="color: red"> Blocked </span></text>
-                }
-            </td>
-            <td>
-                @if (i.AdminRoot)
-                {
-                    <text ><span style="color: #00bfff">Admin </span></text>
-                }
-                else
-                {
-                    <text ><span style="color: black"> User </span></text>
-                }
-            </td>
-
-
-        </tr>
-
-    }
-</table>
-
-
-<div class="modal fade" id="staticBackdropCreate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Загрузить новый Item</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="post" asp-controller="Collection" asp-action="UpdateCollection" enctype="multipart/form-data" onSubmit="window.location.reload()">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="rendered-form" class="form-label">Загрузить изображение</label>
-                        <input type="file" class="form-control" id="img" name="image">
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="rendered-form" class="form-label">Item Name</label>
-                        <input type="text" class="form-control" id="IDname" name="ItemName" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="rendered-form" class="form-label">Tag</label>
-                        <input type="text" class="form-control" id="IDtag" name="ItemTag" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="rendered-form" class="form-label">Description</label>
-                        <input type="text" class="form-control" id="IDdes" name="ItemDescription">
-                    </div>
-
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLin">
+            <form method="post" asp-controller="Collection" asp-action="UpdateItem" enctype="multipart/form-data" onSubmit="window.location.reload()">
+                <select name="IdItem">
+                    @foreach (var item in @Model.Items)
+                    {
+                        <option name="IdCollection" value="@item.Id">
+                            @item.Name
+                        </option>
+                    }
+                </select>
+                <input name="NewName" value="" placeholder="New Name" />
+                <input name="NewTag" value="" placeholder="New Tag" />
+                <input name="NewDescripton" value="" placeholder="New Description" />
+                <div class="mb-3">
+                    <label for="rendered-form" class="form-label">Загрузить изображение</label>
+                    <input type="file" class="form-control" id="image" name="image">
                 </div>
-                <div class="modal-footer">
-
-                </div>
+                <input class="btn btn-primary" type="submit" value="Update" formaction="~/Collection/UpdateItem">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <input class="btn btn-primary" type="submit" value="Create" formaction="~/Collection/CreateItem">
+            </form>
+        </div>
+    </div>
+
+    <div class="dropdown">
+        <a class="btn btn-danger dropdown-toggle" href="#" role="button" id="dropdownMenuLine" data-bs-toggle="dropdown" aria-expanded="false" data-info="4">
+            Delete Item
+        </a>
+
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLine">
+            <form method="post" asp-controller="Collection" asp-action="DeleteItem" enctype="multipart/form-data" onSubmit="window.location.reload()">
+                <select name="IdItem">
+                    @foreach (var item in @Model.Items)
+                    {
+                        <option name="IdItem" value="@item.Id">
+                            @item.Name
+                        </option>
+                    }
+                </select>
+                <input class="btn btn-danger" type="submit" value="Delete" formaction="~/Collection/DeleteItem">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </form>
         </div>
     </div>
 </div>
+    <table class="table table-borderless table-bordered">
+        <thead class="text-dark">
+            <tr>
+                <th>
+                    Admin
+                </th>
+
+                <th>
+                    UserName
+                </th>
+
+                <th>
+                    Email
+                </th>
+                <th>
+                    Status
+                </th>
+                <th>
+                    Role
+                </th>
 
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+            </tr>
+        </thead>
+
+        @foreach (var i in Model.Users)
+        {
+            <tr>
+                <td>
+                    <form method="post" asp-controller="User">
+
+                        <div class="dropdown">
+                            <a class="btn btn-light dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                Action
+                            </a>
+
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+
+                                <li>
+                                    <input class="btn btn-outline-danger" type="submit" name="Id" value="Delete" formmethod="post" formaction="~/User/MultiplyDelete" style="border-color: white" />
+                                    <input name="usersId" value="@i.Id" style="visibility: hidden" size="1" />
+                                </li>
+
+                                <li>
+                                    <input class="btn btn-outline-warning" type="submit" name="Id" value="Block" formmethod="post" formaction="~/User/MultiplyBlock" style="border-color: white" />
+                                    <input name="usersId" value="@i.Id" style="visibility: hidden" size="1" />
+                                </li>
+
+                                <li>
+                                    <input class="btn btn-outline-success" type="submit" name="Id" value="Unblock" formmethod="post" formaction="~/User/MultiplyUnblock" style="border-color: white" />
+                                    <input name="usersId" value="@i.Id" style="visibility: hidden" size="1" />
+                                </li>
+
+                                <li>
+                                    <input class="btn btn-outline-dark" type="submit" name="Id" value="Set User Role" formmethod="post" formaction="~/User/MultiplySetUserRoot" style="border-color: white" />
+                                    <input name="usersId" value="@i.Id" style="visibility: hidden" size="1" />
+                                </li>
+                                <li>
+                                    <input class="btn btn-outline-primary" type="submit" name="Id" value="Set Admin Role" formmethod="post" formaction="~/User/MultiplySetAdminRoot" style="border-color: white" />
+                                    <input name="usersId" value="@i.Id" style="visibility: hidden" size="1" />
+                                </li>
+                                }
+
+                            </ul>
+                        </div>
+                    </form>
+                </td>
+                <td>
+                    <form>
+                        <input name="name" value="@i.UserName" style="visibility: hidden" size="1" />
+                        <input type="submit" name="name" value="@i.UserName" class="btn btn-link text-dark" formaction="~/User/UserProfile" style=" align-content: center">
+                    </form>
+                </td>
+                <td>
+                    @Html.DisplayFor(mitem => i.Email)
+                </td>
+                <td>
+                    @if (i.IsActive)
+                    {
+                        <text ><span style="color: #34ce57">Not Blocked </span></text>
+                    }
+                    else
+                    {
+                        <text ><span style="color: red"> Blocked </span></text>
+                    }
+                </td>
+                <td>
+                    @if (i.AdminRoot)
+                    {
+                        <text ><span style="color: #00bfff">Admin </span></text>
+                    }
+                    else
+                    {
+                        <text ><span style="color: black"> User </span></text>
+                    }
+                </td>
+
+
+            </tr>
+
+        }
+    </table>
+
+
+    <div class="modal fade" id="staticBackdropCreate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Create new Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" asp-controller="Collection" asp-action="CreateItem" enctype="multipart/form-data" onSubmit="window.location.reload()">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="rendered-form" class="form-label">Image</label>
+                            <input type="file" class="form-control" id="img" name="image">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="rendered-form" class="form-label">Item Name</label>
+                            <input type="text" class="form-control" id="IDname" name="ItemName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="rendered-form" class="form-label">Item Tag</label>
+                            <input type="text" class="form-control" id="IDtag" name="ItemTag" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="rendered-form" class="form-label">Item Description</label>
+                            <input type="text" class="form-control" id="IDdes" name="ItemDescription">
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+
+                    </div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <input class="btn btn-success" type="submit" value="Create" formaction="~/Collection/CreateItem">
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>

@@ -9,17 +9,19 @@
 
 
 <div class="fs-3">
-    <ui>
-        <img src="@Url.Content(Model.Item.Image)" style="width: 150px; height: 200px;" alt=""/>
-        <li>@Model.Item.Name</li>
-        <li>@Model.Item.Tag</li>
-        <li>@Model.Item.Description</li>
+    <div class="btn-group">
+        <img src="@Url.Content(Model.Item.Image)" style="width: 150px; height: 200px;" alt="" />
+        <ui>
+            <p>Name: @Model.Item.Name</p>
+            <p>Tag: @Model.Item.Tag</p>
+            <p>Description: @Model.Item.Description</p>
 
-        @if (Model.ItemLikes != null)
-        {
-            <li>Лайки: @Model.ItemLikes.Count()</li>
-        }
-    </ui>
+            @if (Model.ItemLikes != null)
+            {
+                <p>Likes: @Model.ItemLikes.Count()</p>
+            }
+        </ui>
+    </div>
 </div>
 <p></p>
 <p></p>
@@ -30,11 +32,11 @@
     <form method="post">
 
         <div class="mb-3">
-            <label for="com" class="form-label fs-4"> Ваш комментарий</label>
+            <label for="com" class="form-label fs-4"> Comment</label>
             <textarea class="form-control" name="comment"></textarea>
         </div>
 
-        <button type="submit" class="btn btn-primary" name="userName" value="@User.Identity.Name" formaction="~/Collection/SetItemComment" onSubmit="window.location.reload()">Отправить</button>
+        <button type="submit" class="btn btn-outline-info" name="userName" value="@User.Identity.Name" formaction="~/Collection/SetItemComment" onSubmit="window.location.reload()">Отправить</button>
         <input name="idItem" value="@Model.Item.Id" style="visibility: hidden" size="1"/>
     </form>
 }
@@ -45,7 +47,7 @@
 <p></p>
 
 <div class="widget widget-comments open" id="comments">
-    <div class="block-title">Комментарии:</div>
+    <div class="block-title">Comments:</div>
 
     <ol class="list-group list-group-numbered">
         @if (Model.ItemComments != null)
@@ -53,25 +55,24 @@
             <p style="visibility: hidden"> @Model.ItemComments.OrderByDescending(i => i.Date);</p>
             @foreach (var i in Model.ItemComments)
             {
-
                 <li class="list-group-item d-flex justify-content-between align-items-start">
                     <div class="ms-2 me-auto">
-                        <div class="fw-bold">
-
+                        <div>
                             <form method="post" asp-action="UserProfile" asp-controller="User">
 
-                                @if (User.Identity.IsAuthenticated)
-                                {
-                                    <input name="name" value="@i.UserName" style="visibility: hidden" size="1"/>
-                                    <input type="submit" name="button" value="@i.UserName" class="btn btn-link text-dark" formaction="~/User/UserProfile">
-                                }
-                                else
-                                {
-                                    <a class="text-dark">@i.UserName</a>
-                                }
-                            </form>
-                            <a>@i.Date</a>
-                            <p>----------------</p>
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
+                                        <input name="name" value="@i.UserName" style="visibility: hidden" size="1" />
+                                        <input type="submit" name="button" value="@i.UserName" class="btn btn-link text-dark" formaction="~/User/UserProfile">
+                                    }
+                                    else
+                                    {
+                                        <a class="text-dark">@i.UserName</a>
+                                    }
+                                </form>
+
+                                <p>@i.Date</p>
+                            <p></p>
                         </div>
                         @i.Comment
                     </div>

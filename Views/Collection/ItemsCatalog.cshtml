@@ -7,47 +7,53 @@
 
 }
 @*<link href="~/css/ItemsPage.css" rel="stylesheet"/>*@
-<link href="~/css/site.css" rel="stylesheet"/>
+@*<link href="~/css/site.css" rel="stylesheet"/>*@
 <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet"/>
 
 <h2>Catalog</h2>
+<div class="btn-group">
 
-<form method="post" asp-action="ItemsCatalog">
-    <p>
-        <input type="search" name="str" placeholder="Поиск по каталогу">
-        <input type="submit" value="Найти" formaction="~/Collection/ItemsCatalog">
-    </p>
+    <div class="dropdown">
+        <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+            Tag Cloud
+        </a>
 
-</form>
-
-
-<div class="dropdown">
-    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-        Tag Cloud
-    </a>
-
-    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-        <form method="post">
-        <li>
-            <input type="search" name="str" style="visibility: hidden" size="1">
-            <input type="submit" value="All" formaction="~/Collection/ItemsCatalog">
-        </li>
-        </form>
-
-        @foreach (var tag in Model.TagCloude)
-        {
+        <ul class="dropdown-menu justify-content-lg-start" aria-labelledby="dropdownMenuLink">
             <form method="post">
-            <li>
-                <input type="search" name="str" value="@tag" style="visibility: hidden" size="1">
-                <input type="submit" value="@tag" formaction="~/Collection/ItemsCatalog">
-            </li>
+                <li>
+                    <div class="btn-group">
+                        <input class="btn btn-link" type="submit" value="All" formaction="~/Collection/ItemsCatalog">
+                        <input type="search" name="str" style="visibility: hidden" size="1">
+                    </div>
+                </li>
             </form>
-        }
+
+            @foreach (var tag in Model.TagCloude)
+            {
+                <form method="post">
+                    <li>
+                        <input class="btn btn-link" type="submit" value="@tag" formaction="~/Collection/ItemsCatalog">
+                        <input class="btn btn-light" type="search" name="str" value="@tag" style="visibility: hidden" size="1">
 
 
-    </ul>
+                    </li>
+                </form>
+            }
+
+
+        </ul>
+    </div>
+
+    <form method="post" asp-action="ItemsCatalog">
+        <p>
+            <input type="search" name="str" placeholder="">
+            <input class="btn btn-dark" type="submit" value="Search" formaction="~/Collection/ItemsCatalog">
+        </p>
+
+    </form>
+
+
 </div>
-
 
 <div class="container">
     <main>
@@ -56,7 +62,7 @@
             <div class="col-md-5 col-lg-4 order-md-last">
                 <h4 class="d-flex justify-content-between align-items-center mb-3">
                     <span class="text-primary">Largest Collections</span>
-                    <span class="badge bg-primary rounded-pill">3</span>
+                    <span class="badge bg-primary rounded-pill">5</span>
                 </h4>
 
                 <ul class="list-group mb-3">
@@ -68,12 +74,13 @@
                             <li class="list-group-item d-flex justify-content-between lh-sm">
 
                                 <form method="post" asp-action="CollectionItems" asp-controller="Collection">
-                                    <p>
-                                        <input type="submit" name="button" value="@topFive.Name" class="btn btn-link align-content-center" formaction="~/Collection/CollectionItems">
-                                        <input name="IdUser" value="@topFive.UserId" style="visibility: hidden" size="1"/>
-                                        <input name="IdCollection" value="@topFive.Id" style="visibility: hidden" size="1"/>
-
-                                    </p>
+                                    
+                                        <div class="btn-group">
+                                            <input type="submit" name="button" value="@topFive.Name" class="btn btn-link align-content-center" formaction="~/Collection/CollectionItems">
+                                            <input name="IdUser" value="@topFive.UserId" style="visibility: hidden" size="1" />
+                                            <input name="IdCollection" value="@topFive.Id" style="visibility: hidden" size="1" />
+                                        </div>
+                                    
                                 </form>
 
                             </li>
@@ -95,24 +102,25 @@
                 <table class="table table-borderless table-bordered">
                     <thead class="text-dark">
                     <tr>
+                        <th class="text-center">
+                            Likes
+                        </th>
+
                         <th>
 
                         </th>
 
-                        <th>
-                            Image
-                        </th>
-
-                        <th>
+                        <th class="text-center">
                             Tag
                         </th>
-                        <th>
+                        <th class="text-center">
                             Name
                         </th>
-                        <th>
+                        <th class="text-center">
                             Description
                         </th>
                         <td>
+
                         </td>
                     </tr>
                     </thead>
@@ -121,41 +129,41 @@
                     {
                         <tr>
                             <td>
-
                                 <form id="myForm" asp-controller="Collection" asp-action="SetItemLike" method="post">
-                                    @if (Model.ItemLikes != null)
+                                   
+                                    @if (Model.ItemLikes != null && User.Identity.IsAuthenticated)
                                     {
-                                                    @*<input type="button" name="UserId" value="@Model.User.Id" style="visibility: hidden">
-                                                        <input type="button" name="ItemId" value="@i.Id" style="visibility: hidden" />*@
-
-                                        <input name="UserId" value="@Model.User.Id" style="visibility: hidden" size="1"/>
-                                        <input name="ItemId" value="@i.Id" style="visibility: hidden" size="1"/>
-                                        <input type="submit" name="asd" id="asd" value="Like?" formaction="~/Collection/SetItemLike"/>
-
-                                        @if (Model.ItemLikes.Any(j => (j.UserId == Model.User.Id) && (j.ItemId == i.Id)))
-                                        {
-                                            <label for="toggle-heart" aria-label="like" style="align-content: center">❤</label>
-                                        }
+                                        <div class="btn-group">
+                                            <input class="btn btn-outline-danger" type="submit" name="asd" id="asd" value="Like" formaction="~/Collection/SetItemLike" />
+                                            @if (Model.ItemLikes.Any(j => (j.UserId == Model.User.Id) && (j.ItemId == i.Id)))
+                                            {
+                                                <label for="toggle-heart" aria-label="like" style="align-content: center">❤</label>
+                                            }
+                                        </div>
+                                        <input name="UserId" value="@Model.User.Id" style="visibility: hidden" size="1" />
+                                        <input name="ItemId" value="@i.Id" style="visibility: hidden" size="1" />
                                     }
                                     <p></p>
                                     @if (i.ItemLikes != null)
                                     {
-                                        <label aria-label="like" style="align-content: center">@i.ItemLikes.Count().ToString() </label>
+                                        <label class="text-center fw-bold" aria-label="like" >@i.ItemLikes.Count().ToString() </label>
                                     }
+
                                 </form>
                             </td>
-                            <td>
+                            <td class="text-center">
                                 <img src="@Url.Content(i.Image)" style="width: 150px; height: 200px;" alt=""/>
                             </td>
-                            <td>
+                            <td class="text-center">
                                 @Html.DisplayFor(item => i.Tag)
-
                             </td>
                             <td>
                                 <form method="post" asp-action="ItemProfile">
-                                    <p>
-                                        <input name="id" , value="@i.Id" style="visibility: hidden" size="1"/>
+                                    <div class="text-center">
                                         <input type="submit" name="button" value="@i.Name" class="btn btn-link text-dark" formaction="~/Collection/ItemProfile">
+                                    </div>
+                                    <p class="btn-group">
+                                        <input name="id" , value="@i.Id" style="visibility: hidden" size="1"/>
                                     </p>
                                 </form>
                             </td>
@@ -166,30 +174,29 @@
                             <td>
                                 @if (User.Identity.IsAuthenticated && (Model.UserCollections != null))
                                 {
-                                    
+                                    <div class="dropdown">
+                                        <a class="btn btn-outline-success dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Add to:
+                                        </a>
 
-                                        <div class="dropdown">
-                                            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                                                В коллекцию
-                                            </a>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
 
-                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-
-                                                @foreach (var collection in Model.UserCollections)
-                                                {
-                                                    <form method="post" asp-action="AddCollectionItem">
+                                            @foreach (var collection in Model.UserCollections)
+                                            {
+                                                <form method="post" asp-action="AddCollectionItem">
                                                     <li>
-
-                                                        <input name="IdCollection" value="@collection.Id" style="visibility: hidden" size="1" />
-                                                        <input type="submit" name="CollectionName" value="@collection.Name" class="btn btn-link text-dark" formaction="~/Collection/AddCollectionItem">
-                                                        <input name="IdItem" value="@i.Id" style="visibility: hidden" size="1" />
+                                                        <div class="btn-group">
+                                                            <input type="submit" name="CollectionName" value="@collection.Name" class="btn btn-link text-dark" formaction="~/Collection/AddCollectionItem">
+                                                            <input name="IdCollection" value="@collection.Id" style="visibility: hidden" size="1" />
+                                                            <input name="IdItem" value="@i.Id" style="visibility: hidden" size="1" />
+                                                        </div>
+                                                       
                                                     </li>
-                                                    </form>
-                                                }
+                                                </form>
+                                            }
 
-                                            </ul>
-                                        </div>
-                                    
+                                        </ul>
+                                    </div>
                                 }
                             </td>
                         </tr>

@@ -143,10 +143,16 @@ namespace MyCollections.Controllers
        
         public IActionResult AdminMenu()
         {
+            AdminMenuViewModel adminMenuViewModel = new AdminMenuViewModel();
+
             var users = _userManager.Users.ToList();
             if (users.Any(u => User.Identity.Name == u.UserName && u.AdminRoot && u.IsActive))
             {
-                return View(_userManager.Users.ToList());
+                adminMenuViewModel.Users = _userManager.Users.ToList();
+                adminMenuViewModel.Items = _db.Items.ToList();
+
+                return View(adminMenuViewModel);
+
             }
 
             return RedirectToAction("Login", "User");
@@ -311,7 +317,7 @@ namespace MyCollections.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public IActionResult UserProfile(string name)
+        public IActionResult UserProfile(string name,string str)
         {
             UserProfileViewModel userProfile = new UserProfileViewModel();
             User user;
@@ -325,6 +331,10 @@ namespace MyCollections.Controllers
             }
 
             userProfile.UserCollections = _db.UserCollections.Where(coll => coll.UserId.Equals(user.Id)).ToList();
+
+            userProfile.UserCollections = !string.IsNullOrEmpty(str)
+                ? userProfile.UserCollections.Where(collection => collection.Tag.Contains(str) || collection.Name.Contains(str)).ToList()
+                : userProfile.UserCollections;
 
             userProfile.User = user;
             userProfile.ExtendedFields = new ExtendedField();
